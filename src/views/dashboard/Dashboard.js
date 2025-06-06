@@ -1,0 +1,860 @@
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { legacy_createStore as createStore } from 'redux'
+import { CButton, CCard, CCardBody, CCol, CRow } from '@coreui/react'
+import { FaExchangeAlt, FaEye, FaTruckMoving, FaMapMarkedAlt, FaSyncAlt, FaFilter } from 'react-icons/fa'
+import { Button, Col, Row, Spinner, Table, Tab, Tabs, Container, Form } from 'react-bootstrap'
+import { useNavigate, useLocation } from 'react-router-dom'
+import SearchBar from '../../components/SearchBar'
+import EditJobAdmin from '../../components/Modals/EditJobAdmin'
+import { get } from '../../lib/request'
+import { getCurrentDate, getFormattedDAndT } from '../../lib/getFormatedDate'
+import DateRangeFilter from '../../components/DateRangeFilter'
+import AssignDriverModal from '../../components/Modals/AssignDriver'
+import ChangeDriverModal from '../../components/Modals/ChangeDriver'
+import EditJob from '../../components/Modals/EditJob'
+import ViewJobs from '../../components/Modals/ViewJobs'
+import getStatusStyles from '../../services/getStatusColor'
+import sortData from '../../services/sortData'
+import { LuChevronDown } from 'react-icons/lu'
+import { BsThreeDotsVertical } from 'react-icons/bs'
+import FilterOffCanvas from '../../components/Filter'
+
+const Dashboard = () => {
+  const currentDate = getCurrentDate()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const dispatch = useDispatch()
+  const searchQuery = useSelector((state) => state.searchQuery)
+  const [show, setShow] = useState(false)
+  const [showView, setShowView] = useState(false)
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [isReferesh, setIsReferesh] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(location.state?.selectedItem || {})
+  const [message, setMessage] = useState('')
+  const [showAssign, setShowAssign] = useState(false)
+  const [showChangeDriver, setShowChangeDriver] = useState(false)
+  const [showCanvas, setShowCanvas] = useState(false)
+  const handleShow = () => setShowCanvas(true);
+  const [validated, setValidated] = useState(false)
+  const [activeTab, setActiveTab] = useState("todaysJob");
+
+
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape') {
+        navigate(-1);
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    const hasFilters =
+      searchQuery.currentStatus ||
+      searchQuery.clientId ||
+      searchQuery.driverId ||
+      searchQuery.fromDate ||
+      searchQuery.toDate ||
+      searchQuery.jobId ||
+      searchQuery.clientName ||
+      searchQuery.driverName;
+
+    if (hasFilters && searchTerm.trim()) {
+      handleSearchClick(searchTerm, searchQuery);
+    }
+  }, []);
+
+  useEffect(() => {
+    handleTabSelect("todaysJob");
+  }, []);
+  const handleTabSelect = (key) => {
+    setActiveTab(key);
+
+    if (key === 'allJobs') {
+      handleClear();
+    } else {
+      handleTodayJobs();
+    }
+  };
+
+  const setSearchQuery = (query) => {
+    dispatch({
+      type: 'updateSearchQuery',
+      payload: query,
+    })
+  }
+
+  // handle edit
+  const handleClose = () => setShow(false)
+
+  const handleCloseCanvas = () => setShowCanvas(false)
+
+  // handle assign
+  const handleShowAssign = (item) => {
+    setSelectedItem(item)
+    setShowAssign(true)
+  }
+  // handle change driver
+  const handelChangeDriver = (item) => {
+    setSelectedItem(item)
+    setShowChangeDriver(true)
+  }
+
+  // handle view
+  const handleView = (item) => {
+    console.log(item);
+    setSelectedItem(item)
+    sessionStorage.setItem('selectedItem', JSON.stringify(item))
+    navigate(`/client/job/details/${item._id}`, { state: { selectedItem: item } })
+  }
+  // close view
+  const handleCloseView = () => setShowView(false)
+
+  const onSearch = (newData) => {
+    setMessage('')
+    if (newData.length === 0) {
+      setMessage('No data found')
+    }
+    setData(newData)
+  }
+
+  const handleTodayJobs = () => {
+    setLoading(true)
+    get(`/admin/info/jobFilter?fromDate=${currentDate}&toDate=${currentDate}`, 'admin').then(
+      (response) => {
+        if (response?.data?.status) {
+          if (response?.data?.data?.length === 0) {
+            setMessage('No data found')
+          }
+          setData(response?.data?.data)
+          setLoading(false)
+        }
+      },
+    )
+  }
+  // get initial data
+  const getInitialData = () => {
+    get(`/admin/info/jobFilter?currentStatus=Un-Delivered`, 'admin')
+      .then((response) => {
+        if (response?.data?.status) {
+          if (response?.data?.data?.length === 0) {
+            setMessage('No data found')
+          }
+          setData(response?.data?.data)
+          setLoading(false)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    console.log(searchQuery.toDate);
+    console.log(searchQuery.fromDate);
+    setMessage('')
+    if (
+      searchQuery.currentStatus ||
+      searchQuery.clientId ||
+      searchQuery.driverId ||
+      searchQuery.fromDate ||
+      searchQuery.toDate ||
+      searchQuery.jobId ||
+      searchQuery.clientName ||
+      searchQuery.driverName
+    ) {
+      setLoading(false)
+
+    } else {
+      getInitialData()
+    }
+  }, [page, limit, isReferesh])
+
+  const handleClear = () => {
+    setMessage('')
+    setIsReferesh(!isReferesh)
+    setSearchQuery({
+      AWB: '',
+      clientId: '',
+      driverId: '',
+      fromDate: '',
+      toDate: '',
+      currentStatus: '',
+      jobId: '',
+      clientName: '',
+      driverName: '',
+    })
+  }
+
+  const handleRefresh = () => {
+    setLoading(true)
+    setMessage('')
+
+    let queryParams = []
+
+    if (searchQuery.currentStatus)
+      queryParams.push(`currentStatus=${searchQuery.currentStatus}`)
+    if (searchQuery.clientId) queryParams.push(`clientId=${searchQuery.clientId}`)
+    if (searchQuery.driverId) queryParams.push(`driverId=${searchQuery.driverId}`)
+    if (searchQuery.fromDate) queryParams.push(`fromDate=${searchQuery.fromDate}`)
+    if (searchQuery.toDate) queryParams.push(`toDate=${searchQuery.toDate}`)
+    if (searchQuery.jobId) queryParams.push(`jobId=${searchQuery.jobId}`)
+    if (searchQuery.clientName) queryParams.push(`clientName=${searchQuery.clientName}`)
+    if (searchQuery.driverName) queryParams.push(`driverName=${searchQuery.driverName}`)
+
+    const query = queryParams.join('&')
+
+    get(`/admin/info/jobFilter?${query}`, 'admin')
+      .then((response) => {
+        if (response?.data?.status) {
+          if (response?.data?.data?.length === 0) {
+            setMessage('No data found')
+          }
+          setData(response?.data?.data)
+          setLoading(false)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        setLoading(false)
+      })
+  }
+
+
+  // handle sort
+  const handleSort = (field) => {
+    const sortedData = sortData(data, field)
+    setData(sortedData)
+  }
+
+  useEffect(() => {
+    // Retrieve the selected item from local storage if it exists
+    const storedSelectedItem = sessionStorage.getItem('selectedItem')
+    if (storedSelectedItem) {
+      setSelectedItem(JSON.parse(storedSelectedItem))
+    }
+  }, [])
+
+  return (
+    <>
+      <Row className="d-flex pb-3 align-items-center justify-content-between">
+        <Col md={2} className="m-0">
+          {/* <SearchBar
+            onSearch={onSearch}
+            role="admin"
+            handleClear={handleClear}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          /> */}
+          <h3>Dashboard</h3>
+        </Col>
+
+        <Col md={10} className="d-flex flex-wrap justify-content-start justify-content-md-end align-items-center gap-3 mt-3 mt-md-0">
+          <Button
+            variant="dark"
+            className="input-group-text cursor-pointer custom-icon-btn"
+            onClick={handleRefresh}
+          >
+            <FaSyncAlt />
+          </Button>
+          <DateRangeFilter
+            setData={setData}
+            role="admin"
+            setMessage={setMessage}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+          <Button onClick={handleShow} className="input-group-text cursor-pointer custom-icon-btn">
+            <FaFilter />
+          </Button>
+          <Button onClick={handleClear} style={{ fontSize: '12px' }} className="custom-btn">
+            Clear Filters
+          </Button>
+        </Col>
+      </Row>
+
+      <FilterOffCanvas
+        show={showCanvas}
+        handleClose={handleCloseCanvas}
+        onApplyFilter={(selectedOption) =>
+          handleSearchClick(searchTerm, selectedOption)
+        }
+        role="admin"
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+
+
+      <Tabs activeKey={activeTab} onSelect={handleTabSelect} defaultActiveKey="todaysJob" id="todays-job" className="mb-3 custom-tabs">
+        {/* Add Client Tab */}
+        <Tab eventKey="todaysJob" title="Today's Jobs">
+          <div className="table-responsive">
+            <Table responsive hover bordered>
+              <thead>
+                <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('clientId.companyName')} />
+                    Client
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.readyTime')} />
+                    Ready Time
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.cutOffTime')} />
+                    Cutoff Time
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('AWB')} />
+                    AWB
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pieces')} />
+                    Pieces
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceTypeId.text')} />
+                    Service Type
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceCodeId.text')} />
+                    Service Code
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')} />
+                    Pickup From
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')} />
+                    Deliver To
+                  </th>
+                  {/* <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
+                    Job ID
+                  </th> */}
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('note')} />
+                    Note
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('driverId.firstname')} />
+                    Driver
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('currentStatus')} />
+                    Status
+                  </th>
+                  <th className="text-center" colSpan={2}>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {message ? (
+                  <tr>
+                    <td colSpan={14} className="text-center text-danger">{message}</td>
+                  </tr>
+                ) : loading ? (
+                  <tr>
+                    <td colSpan={14} className="text-center"><Spinner animation="border" variant="primary" /></td>
+                  </tr>
+                ) : (
+                  data && data.map((item, index) => {
+                    const isSelected = item._id === selectedItem._id;
+                    const status = item?.isHold ? 'Hold' : item?.currentStatus;
+                    const styles = getStatusStyles(status);
+
+                    const tdStyle = {
+                      backgroundColor: isSelected ? '#E0E0E0' : 'transparent',
+                      fontSize: 13,
+                      textAlign: 'left',
+                    };
+
+                    return (
+                      <tr key={index} className="cursor-pointer">
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.clientId?.companyName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.pickUpDetails?.readyTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.dropOfDetails?.cutOffTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.AWB}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pieces}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceTypeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceCodeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pickUpDetails?.pickupLocationId?.customName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.dropOfDetails?.dropOfLocationId?.customName}
+                        </td>
+                        {/* <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.uid}
+                        </td> */}
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.note}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.driverId ? `${item.driverId.firstname}-${item.driverId.lastname}` : ''}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          <div className="px-1 py-1 rounded-5 text-center" style={styles}>
+                            {status}
+                          </div>
+                        </td>
+                        {/* <td className="text-center" style={tdStyle}>
+                          {!item?.driverId ? (
+                            <FaTruckMoving onClick={() => handleShowAssign(item)} />
+                          ) : (
+                            <FaExchangeAlt onClick={() => handelChangeDriver(item)} />
+                          )}
+                        </td>
+                        <td className="text-center" style={tdStyle}>
+                          <FaMapMarkedAlt className="text-primary" onClick={() => navigate(`/location/${item._id}`)} />
+                        </td> */}
+                        <td className="text-center action-dropdown-menu" style={tdStyle}>
+                          <div className="dropdown">
+                            <button
+                              className="btn btn-link p-0 border-0"
+                              type="button"
+                              id={`dropdownMenuButton-${item._id}`}
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              <BsThreeDotsVertical size={18} />
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby={`dropdownMenuButton-${item._id}`}>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    item?.driverId ? handelChangeDriver(item) : handleShowAssign(item)
+                                  }}
+                                >
+                                  {item?.driverId ? 'Change Driver' : 'Assign Driver'}
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => navigate(`/location/${item._id}`)}
+                                >
+                                  Package Location
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </Table>
+          </div>
+        </Tab>
+
+        {/* Client Rates Tab */}
+        <Tab eventKey="allJobs" title="All Jobs" className="client-rates-table">
+          <div className="table-responsive">
+            <Table responsive hover bordered>
+              <thead>
+                <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('clientId.companyName')} />
+                    Client
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.readyTime')} />
+                    Ready Time
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.cutOffTime')} />
+                    Cutoff Time
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('AWB')} />
+                    AWB
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pieces')} />
+                    Pieces
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceTypeId.text')} />
+                    Service Type
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceCodeId.text')} />
+                    Service Code
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')} />
+                    Pickup From
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')} />
+                    Deliver To
+                  </th>
+                  {/* <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
+                    Job ID
+                  </th> */}
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('note')} />
+                    Note
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('driverId.firstname')} />
+                    Driver
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('currentStatus')} />
+                    Status
+                  </th>
+                  <th className="text-center" colSpan={2}>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {message ? (
+                  <tr>
+                    <td colSpan={14} className="text-center text-danger">{message}</td>
+                  </tr>
+                ) : loading ? (
+                  <tr>
+                    <td colSpan={14} className="text-center"><Spinner animation="border" variant="primary" /></td>
+                  </tr>
+                ) : (
+                  data && data.map((item, index) => {
+                    const isSelected = item._id === selectedItem._id;
+                    const status = item?.isHold ? 'Hold' : item?.currentStatus;
+                    const styles = getStatusStyles(status);
+
+                    const tdStyle = {
+                      backgroundColor: isSelected ? '#E0E0E0' : 'transparent',
+                      fontSize: 13,
+                      textAlign: 'left',
+                    };
+
+                    return (
+                      <tr key={index} className="cursor-pointer">
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.clientId?.companyName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.pickUpDetails?.readyTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.dropOfDetails?.cutOffTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.AWB}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pieces}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceTypeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceCodeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pickUpDetails?.pickupLocationId?.customName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.dropOfDetails?.dropOfLocationId?.customName}
+                        </td>
+                        {/* <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.uid}
+                        </td> */}
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.note}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.driverId ? `${item.driverId.firstname}-${item.driverId.lastname}` : ''}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          <div className="px-1 py-1 rounded-5 text-center" style={styles}>
+                            {status}
+                          </div>
+                        </td>
+                        {/* <td className="text-center" style={tdStyle}>
+                          {!item?.driverId ? (
+                            <FaTruckMoving onClick={() => handleShowAssign(item)} />
+                          ) : (
+                            <FaExchangeAlt onClick={() => handelChangeDriver(item)} />
+                          )}
+                        </td>
+                        <td className="text-center" style={tdStyle}>
+                          <FaMapMarkedAlt className="text-primary" onClick={() => navigate(`/location/${item._id}`)} />
+                        </td> */}
+                        <td className="text-center action-dropdown-menu" style={tdStyle}>
+                          <div className="dropdown">
+                            <button
+                              className="btn btn-link p-0 border-0"
+                              type="button"
+                              id={`dropdownMenuButton-${item._id}`}
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              <BsThreeDotsVertical size={18} />
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby={`dropdownMenuButton-${item._id}`}>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    item?.driverId ? handelChangeDriver(item) : handleShowAssign(item)
+                                  }}
+                                >
+                                  {item?.driverId ? 'Change Driver' : 'Assign Driver'}
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => navigate(`/location/${item._id}`)}
+                                >
+                                  Package Location
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </Table>
+          </div>
+        </Tab>
+      </Tabs>
+      {/* <CCard className="mb-4">
+        <CCardBody>
+          <CRow>
+            <CCol sm={10}>
+              <h4 id="traffic" className="card-title mb-0">
+                Jobs
+              </h4>
+            </CCol>
+            <CCol sm={2} className="d-flex justify-content-end">
+              <CButton color="primary" style={{ fontSize: '12px' }} onClick={handleTodayJobs}>
+                Today's Jobs
+              </CButton>
+            </CCol>
+          </CRow>
+          <div className="table-responsive">
+            <Table className="mt-3" responsive hover bordered>
+              <thead>
+                <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('clientId.companyName')} />
+                    Client
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.readyTime')} />
+                    Ready Time
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.cutOffTime')} />
+                    Cutoff Time
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('AWB')} />
+                    AWB
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pieces')} />
+                    Pieces
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceTypeId.text')} />
+                    Service Type
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceCodeId.text')} />
+                    Service Code
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')} />
+                    Pickup From
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')} />
+                    Deliver To
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('note')} />
+                    Note
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('driverId.firstname')} />
+                    Driver
+                  </th>
+                  <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('currentStatus')} />
+                    Status
+                  </th>
+                  <th className="text-center" colSpan={2}>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {message ? (
+                  <tr>
+                    <td colSpan={14} className="text-center text-danger">{message}</td>
+                  </tr>
+                ) : loading ? (
+                  <tr>
+                    <td colSpan={14} className="text-center"><Spinner animation="border" variant="primary" /></td>
+                  </tr>
+                ) : (
+                  data && data.map((item, index) => {
+                    const isSelected = item._id === selectedItem._id;
+                    const status = item?.isHold ? 'Hold' : item?.currentStatus;
+                    const styles = getStatusStyles(status);
+
+                    const tdStyle = {
+                      backgroundColor: isSelected ? '#E0E0E0' : 'transparent',
+                      fontSize: 13,
+                      textAlign: 'left',
+                    };
+
+                    return (
+                      <tr key={index} className="cursor-pointer">
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.clientId?.companyName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.pickUpDetails?.readyTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.dropOfDetails?.cutOffTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.AWB}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pieces}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceTypeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceCodeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pickUpDetails?.pickupLocationId?.customName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.dropOfDetails?.dropOfLocationId?.customName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.note}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.driverId ? `${item.driverId.firstname}-${item.driverId.lastname}` : ''}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          <div className="px-1 py-1 rounded-5 text-center" style={styles}>
+                            {status}
+                          </div>
+                        </td>
+                        <td className="text-center action-dropdown-menu" style={tdStyle}>
+                          <div className="dropdown">
+                            <button
+                              className="btn btn-link p-0 border-0"
+                              type="button"
+                              id={`dropdownMenuButton-${item._id}`}
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              <BsThreeDotsVertical size={18} />
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby={`dropdownMenuButton-${item._id}`}>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    item?.driverId ? handelChangeDriver(item) : handleShowAssign(item)
+                                  }}
+                                >
+                                  {item?.driverId ? 'Change Driver' : 'Assign Driver'}
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => navigate(`/location/${item._id}`)}
+                                >
+                                  Package Location
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </Table>
+          </div>
+        </CCardBody>
+      </CCard> */}
+      {show && (
+        <EditJob
+          show={show}
+          handleClose={handleClose}
+          job={selectedItem}
+          setIsRefresh={setIsReferesh}
+          isReferesh={isReferesh}
+        />
+      )}
+      {showView && <ViewJobs show={showView} handleClose={handleCloseView} job={selectedItem} />}
+      {showAssign && (
+        <AssignDriverModal
+          show={showAssign}
+          setShow={setShowAssign}
+          jobId={selectedItem._id}
+          setIsRefresh={setIsReferesh}
+          isReferesh={isReferesh}
+        />
+      )}
+      {showChangeDriver && (
+        <ChangeDriverModal
+          show={showChangeDriver}
+          setShow={setShowChangeDriver}
+          jobId={selectedItem._id}
+          setIsRefresh={setIsReferesh}
+          isReferesh={isReferesh}
+        />
+      )}
+    </>
+  )
+}
+
+export default Dashboard
