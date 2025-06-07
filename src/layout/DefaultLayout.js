@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -9,7 +9,17 @@ const DefaultLayout = () => {
   const location = useLocation()
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const isClient = location.pathname.includes('/client/dashboard')
+  const [isMobileView, setIsMobileView] = useState(false);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768); // mobile breakpoint
+    };
+
+    handleResize(); // initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
     <div className="d-flex flex-column min-vh-100" style={{ height: '100vh' }}>
     {/* HEADER */}
@@ -20,6 +30,7 @@ const DefaultLayout = () => {
         width: '100%',
         background: '#eee',
         boxSizing: 'border-box',
+        zIndex: 1040,
       }}
     >
       <AppHeader />
@@ -36,7 +47,7 @@ const DefaultLayout = () => {
       {/* Sidebar with fixed width */}
       <aside
         style={{
-          width: sidebarShow ? `${SIDEBAR_WIDTH}px` : '0px',
+          width:!isMobileView && sidebarShow ? `${SIDEBAR_WIDTH}px` : '0px',
           backgroundColor: '#f8f9fa',
           overflowY: 'auto',
           boxSizing: 'border-box',
@@ -49,7 +60,7 @@ const DefaultLayout = () => {
       <section
         style={{
           flexGrow: 1,
-          width: sidebarShow ? `calc(100% - ${SIDEBAR_WIDTH}px)` : '100%',
+          width: !isMobileView && sidebarShow ? `calc(100% - ${SIDEBAR_WIDTH}px)` : '100%',
           overflowY: 'auto',
           padding: '1rem',
           boxSizing: 'border-box',

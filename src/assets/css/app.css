@@ -249,3 +249,13 @@ th,td{
   background-color: var(--primary-dark);
   color:#fff;
 }
+
+.search-input-width{
+  width:300px!important;
+}
+
+@media(max-width:567px){
+  .search-input-width{
+    width:100px!important;
+  }
+}

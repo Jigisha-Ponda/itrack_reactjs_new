@@ -140,7 +140,7 @@ const AppHeader = () => {
         currentLogoUrl={logoUrl}
         onSave={handleLogoSave}
       />
-        <CHeaderNav>
+        <CHeaderNav className="w-50 w-lg-100">
           <SearchBar
             onSearch={onSearch}
             role="admin"

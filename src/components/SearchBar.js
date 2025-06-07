@@ -73,14 +73,15 @@ const SearchBar = ({ onSearch, role, searchQuery, setSearchQuery }) => {
   }, []);
 
   return (
-    <Form className="mx-auto d-block">
+    <Form className="ms-auto d-block">
       <InputGroup style={{border:'1px solid #B7B7B7', borderRadius:'4px'}}>
         <Form.Control
           type="text"
           placeholder="Search by Job ID or AWB"
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
-          style={{border:'none',width:'300px'}}
+          style={{border:'none', flex: '1 1 auto', minWidth: 0}}
+          className="search-input-width"
         />
         <Button onClick={handleShow} className="input-group-text cursor-pointer" style={{ backgroundColor: '#fff', border:'none' }} >
           <FaSearch style={{ color: '#0d6efd' }}/>
