@@ -83,7 +83,7 @@ const SearchBar = ({ onSearch, role, searchQuery, setSearchQuery }) => {
           style={{border:'none', flex: '1 1 auto', minWidth: 0}}
           className="search-input-width"
         />
-        <Button onClick={handleShow} className="input-group-text cursor-pointer" style={{ backgroundColor: '#fff', border:'none' }} >
+        <Button className="input-group-text cursor-pointer" style={{ backgroundColor: '#fff', border:'none' }} >
           <FaSearch style={{ color: '#0d6efd' }}/>
         </Button>
       </InputGroup>
