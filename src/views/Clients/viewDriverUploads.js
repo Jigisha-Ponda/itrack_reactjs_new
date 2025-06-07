@@ -13,7 +13,7 @@ export default function ViewDriverUploads({ captures, Rname, RSign }) {
   }
   return (
     <>
-      <Button variant="primary" className="rounded-2 text-white fs-6 m-2" onClick={handleShow}>
+      <Button variant="primary" className="rounded-2 text-white fs-6 m-2 custom-btn" onClick={handleShow}>
         View Driver Uploads{' '}
       </Button>
       <Modal show={show} onHide={handleClose} size="lg">

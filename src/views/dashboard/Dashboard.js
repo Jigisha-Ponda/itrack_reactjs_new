@@ -294,64 +294,51 @@ const Dashboard = () => {
         setSearchQuery={setSearchQuery}
       />
 
-
       <Tabs activeKey={activeTab} onSelect={handleTabSelect} defaultActiveKey="todaysJob" id="todays-job" className="mb-3 custom-tabs">
-        {/* Add Client Tab */}
+        {/* Today's Job Tab */}
         <Tab eventKey="todaysJob" title="Today's Jobs" className="client-rates-table">
           <div className="table-responsive">
             <Table responsive hover bordered>
               <thead>
                 <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('clientId.companyName')} />
+                  <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
                     Client
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.readyTime')} />
+                  <th className="text-center" onClick={() => handleSort('pickUpDetails.readyTime')}>
                     Ready Time
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.cutOffTime')} />
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.cutOffTime')}>
                     Cutoff Time
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('AWB')} />
+                  <th className="text-center" onClick={() => handleSort('AWB')}>
                     AWB
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pieces')} />
+                  <th className="text-center" onClick={() => handleSort('pieces')}>
                     Pieces
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceTypeId.text')} />
+                  <th className="text-center" onClick={() => handleSort('serviceTypeId.text')}>
                     Service Type
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceCodeId.text')} />
+                  <th className="text-center" onClick={() => handleSort('serviceCodeId.text')}>
                     Service Code
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')} />
+                  <th className="text-center" onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')}>
                     Pickup From
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')} />
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')}>
                     Deliver To
                   </th>
                   {/* <th className="text-center">
                     <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
                     Job ID
                   </th> */}
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('note')} />
+                  <th className="text-center" onClick={() => handleSort('note')} > 
                     Note
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('driverId.firstname')} />
+                  <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
                     Driver
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('currentStatus')} />
+                  <th className="text-center" onClick={() => handleSort('currentStatus')}>
                     Status
                   </th>
                   <th className="text-center" colSpan={2}>Actions</th>
@@ -474,62 +461,50 @@ const Dashboard = () => {
           </div>
         </Tab>
 
-        {/* Client Rates Tab */}
+        {/* All Jobs Tab */}
         <Tab eventKey="allJobs" title="All Jobs" className="client-rates-table">
           <div className="table-responsive">
             <Table responsive hover bordered>
               <thead>
                 <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('clientId.companyName')} />
+                  <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
                     Client
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.readyTime')} />
+                  <th className="text-center" onClick={() => handleSort('pickUpDetails.readyTime')}>
                     Ready Time
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.cutOffTime')} />
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.cutOffTime')}>
                     Cutoff Time
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('AWB')} />
+                  <th className="text-center" onClick={() => handleSort('AWB')}>
                     AWB
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pieces')} />
+                  <th className="text-center" onClick={() => handleSort('pieces')}>
                     Pieces
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceTypeId.text')} />
+                  <th className="text-center" onClick={() => handleSort('serviceTypeId.text')}>
                     Service Type
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('serviceCodeId.text')} />
+                  <th className="text-center" onClick={() => handleSort('serviceCodeId.text')}>
                     Service Code
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')} />
+                  <th className="text-center" onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')}>
                     Pickup From
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')} />
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')}>
                     Deliver To
                   </th>
                   {/* <th className="text-center">
                     <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
                     Job ID
                   </th> */}
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('note')} />
+                  <th className="text-center" onClick={() => handleSort('note')}>
                     Note
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('driverId.firstname')} />
+                  <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
                     Driver
                   </th>
-                  <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('currentStatus')} />
+                  <th className="text-center" onClick={() => handleSort('currentStatus')}>
                     Status
                   </th>
                   <th className="text-center" colSpan={2}>Actions</th>

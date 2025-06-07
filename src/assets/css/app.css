@@ -147,6 +147,17 @@
 .custom-btn:hover{
   background-color:var(--primary-dark);
 }
+.custom-border-btn{
+  background-color: inherit;
+  color:var(--primary-dark);
+  border:1px solid var(--primary-dark);
+  border-radius: 4px;
+  padding:10px 15px;
+  font-size:14px;
+}
+.custom-border-btn:hover{
+  background-color:var(--primary-dark);
+}
 .custom-icon-btn{
   background-color: var(--primary-dark);
   color:#fff;
@@ -189,6 +200,7 @@
   padding:12px;
   color:#0B0B0B;
   width:33.33%;
+  cursor:pointer;
 }
 .client-rates-table td{
   padding:12px;
@@ -252,6 +264,11 @@ th,td{
 
 .search-input-width{
   width:300px!important;
+}
+
+.custom-list-main{
+  background-color: #fff;
+  padding: 25px;
 }
 
 @media(max-width:567px){

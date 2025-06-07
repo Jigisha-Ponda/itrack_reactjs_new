@@ -166,7 +166,7 @@ export default function EditJobAdmin({ job, setIsRefresh, isReferesh }) {
 
   return (
     <>
-      <Button className="text-White" onClick={() => handleShow()}>
+      <Button className="text-White custom-border-btn" onClick={() => handleShow()}>
         {' '}
         Edit Job
       </Button>

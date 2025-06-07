@@ -1,4 +1,5 @@
-import { Button, Card, Col, Container, Dropdown, Form, Modal, Row, Spinner } from 'react-bootstrap'
+import { Button, Card, Col, Container, Dropdown, Form, Modal, Row, Spinner, Tabs, Tab, Table } from 'react-bootstrap'
+import { LuChevronDown } from 'react-icons/lu'
 import React, { useEffect, useState } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
 import { get, postWihoutMediaData, updateReq } from '../../lib/request'
@@ -11,7 +12,12 @@ import getLocationByCordinates from '../../services/getLocationByCordinates'
 import ViewDriverUploads from './viewDriverUploads'
 import EditJobAdmin from '../../components/Modals/EditJobAdmin'
 import { MdOutlineArrowBack } from 'react-icons/md'
+import { useDispatch, useSelector } from 'react-redux'
 import Moment from 'react-moment';
+import getStatusStyles from '../../services/getStatusColor'
+import { BsThreeDotsVertical } from 'react-icons/bs'
+import sortData from '../../services/sortData'
+
 export default function ClientJobDetails() {
   const navigate = useNavigate()
   const imgSrc = process.env.Image_Src
@@ -26,7 +32,15 @@ export default function ClientJobDetails() {
   const [showAttachment, setShowAttachment] = useState(false)
   const [pickupLocationName, setPickupLocationName] = useState('')
   const [deliveryLocationName, setDeliveryLocationName] = useState('')
+  const [message, setMessage] = useState('')
+  const [data, setData] = useState([])
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [isReferesh, setIsReferesh] = useState(false)
+  const searchQuery = useSelector((state) => state.searchQuery)
+  const [selectedItem, setSelectedItem] = useState(location.state?.selectedItem || {})
   const [isAdminReview, setIsAdminReview] = useState(false);
+  const [activeTab, setActiveTab] = useState("jobDetails");
 
   // handle attachment modal
   const handleAttachmentClose = () => setShowAttachment(false)
@@ -34,6 +48,9 @@ export default function ClientJobDetails() {
 
   const [activeBtn, setActiveBtn] = useState('jobDetails')
 
+  const handleTabSelect = (selectedTab) => {
+    setActiveTab(selectedTab);
+  };
   const changeActiveBtn = (btn) => {
     setActiveBtn(btn)
   }
@@ -50,6 +67,54 @@ export default function ClientJobDetails() {
     'Hold',
     'Un Hold',
   ]
+
+  const tabLabels = {
+    jobDetails: 'Job Details',
+    clientDetails: 'Client Details',
+    driverAttachments: 'Driver Attachments',
+    pickupDetails: 'Pickup Details',
+    dropDetails: 'Drop Details',
+    invoices: 'Invoices',
+  };
+  useEffect(() => {
+    setLoading(true)
+    console.log(searchQuery.toDate);
+    console.log(searchQuery.fromDate);
+    setMessage('')
+    if (
+      searchQuery.currentStatus ||
+      searchQuery.clientId ||
+      searchQuery.driverId ||
+      searchQuery.fromDate ||
+      searchQuery.toDate ||
+      searchQuery.jobId ||
+      searchQuery.clientName ||
+      searchQuery.driverName
+    ) {
+      setLoading(false)
+
+    } else {
+      getInitialData()
+    }
+  }, [page, limit, isReferesh])
+
+  // get initial data
+  const getInitialData = () => {
+    get(`/admin/info/jobFilter?currentStatus=Un-Delivered`, 'admin')
+      .then((response) => {
+        if (response?.data?.status) {
+          if (response?.data?.data?.length === 0) {
+            setMessage('No data found')
+          }
+          setData(response?.data?.data)
+          setLoading(false)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
 
   const handleStatusChange = () => {
     if (status === 'Hold' || status === 'Un Hold') {
@@ -85,6 +150,15 @@ export default function ClientJobDetails() {
         }
       })
     }
+  }
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setClientData({ ...clientData, [name]: value })
+  }
+  // handle sort
+  const handleSort = (field) => {
+    const sortedData = sortData(data, field)
+    setData(sortedData)
   }
 
   // handle cancle booking
@@ -175,197 +249,218 @@ export default function ClientJobDetails() {
       {loading ? (
         <Spinner animation="border" role="status" className="mx-auto d-block" />
       ) : (
-        <div style={{ fontSize: '11px' }}>
-          {/* Edited */}
-          <div style={{ fontSize: '11px' }}>
-            <button
-              onClick={() => changeActiveBtn('jobDetails')}
-              className="custom-btn rounded-3"
-              style={{
-                backgroundColor: activeBtn === 'jobDetails' ? '#5856d6' : 'transparent',
-                color: activeBtn === 'jobDetails' ? 'white' : 'black',
-              }}
-            >
-              Job Details
-            </button>
-            <button
-              onClick={() => changeActiveBtn('clientDetails')}
-              className="custom-btn mx-3 rounded-3"
-              style={{
-                backgroundColor: activeBtn === 'clientDetails' ? '#5856d6' : 'transparent',
-                color: activeBtn === 'clientDetails' ? 'white' : 'black',
-              }}
-            >
-              Client Details
-            </button>
-            <button
-              onClick={() => changeActiveBtn('driverAttachments')}
-              className="custom-btn mx-3 rounded-3"
-              style={{
-                backgroundColor: activeBtn === 'driverAttachments' ? '#5856d6' : 'transparent',
-                color: activeBtn === 'driverAttachments' ? 'white' : 'black',
-              }}
-            >
-              Driver Attachments
-            </button>
-            <button
-              onClick={() => changeActiveBtn('pickupDetails')}
-              className="custom-btn mx-3 rounded-3"
-              style={{
-                backgroundColor: activeBtn === 'pickupDetails' ? '#5856d6' : 'transparent',
-                color: activeBtn === 'pickupDetails' ? 'white' : 'black',
-              }}
-            >
-              Pickup Details
-            </button>
-            <button
-              onClick={() => changeActiveBtn('dropOfDetails')}
-              className="custom-btn mx-3 rounded-3"
-              style={{
-                backgroundColor: activeBtn === 'dropOfDetails' ? '#5856d6' : 'transparent',
-                color: activeBtn === 'dropOfDetails' ? 'white' : 'black',
-              }}
-            >
-              Drop of Details
-            </button>
-          </div>
+        <div>
+          <Row className="d-flex flex-row align-items-center">
+            <Col md={4}>
+              <h4 className="mb-0">{tabLabels[activeTab]}</h4>
+            </Col>
+            <Col md={8} className="d-flex align-item-center justify-content-end gap-2 py-3">
+              <EditJobAdmin job={job} setIsRefresh={setIsRefresh} isReferesh={isRefresh} />
+              <Button className="custom-border-btn" onClick={() => handleShow()}>
+                {' '}
+                Change Status{' '}
+              </Button>
+              {job?.VpapId == null ? <Button
+                className="custom-border-btn"
+                onClick={() => navigate(`/client/vpap/add/${id}`)}
+              >
+                {' '}
+                Add Vpap
+              </Button> : null}
+              <Button className="custom-border-btn" 
+                onClick={() => navigate(`/location/${id}`)}
+              >
+                {' '}
+                Track Driver{' '}
+              </Button>
+              <Button className="text-white" variant="danger" onClick={handleCancleBooking}>
+                {' '}
+                Cancel Booking{' '}
+              </Button>
+            </Col>
+          </Row>
 
-          <Container className="mt-2 bg-white shadow p-3">
-            {activeBtn === 'jobDetails' ? (
+          {/* Edited */}
+          <Tabs activeKey={activeTab} onSelect={handleTabSelect} id="job-tabs" className="mb-3 custom-tabs">
+            {/* Job Details */}
+            <Tab eventKey="jobDetails" title="Job Details">
               <>
-                <h4 className="text-center mb-2 fw-bold" style={{ fontSize: '14px' }}>
-                  Job Details
-                </h4>
-                <ul className="m-0 p-0 custom-list-main">
+                <ul className="m-0 custom-list-main">
                   <Row>
                     <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Job Id:</b> <span>{job?.uid}</span>
-                      </li>
+                      <Form.Group controlId="jobId">
+                        <Form.Label>Job Id</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="jobId"
+                          value={job?.uid || ""}
+                          placeholder="Enter Job ID"
+                          readOnly // Optional: remove this if the field should be editable
+                        />
+                      </Form.Group>
                     </Col>
                     <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Client Id:</b> <span>{job.clientId?._id}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>AWB:</b> <span>{job?.AWB}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Pieces:</b> <span>{job?.pieces}</span>
-                      </li>
+                      <Form.Group controlId="clientId">
+                        <Form.Label>Client ID</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.clientId?._id || ""} />
+                      </Form.Group>
                     </Col>
 
                     <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Weight:</b> <span>{job?.weight} KG</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Service Type:</b> <span>{job?.serviceTypeId?.text}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Service Code:</b> <span>{job?.serviceCodeId?.text}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Reference No:</b> <span>{job?.custRefNumber}</span>
-                      </li>
+                      <Form.Group controlId="awb">
+                        <Form.Label>AWB</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.AWB || ""} />
+                      </Form.Group>
                     </Col>
 
                     <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Note: </b> <span>{job?.note}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Driver Note: </b>{' '}
-                        <span>
-                          {job?.driverNote?.map((noteObj, index) => {
-                            // Extract and sort numeric keys
-                            return <div key={index}>
-                              <b>{index + 1} . </b>
-                              {noteObj.text}{' '}{' '}{<Moment format="DD/MM/YYYY hh:mm A">
-                                {noteObj.createdAt}
-                              </Moment>}</div>
-                          })}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Admin Note:</b><span>{job?.adminNote}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>VPAP Submitted:</b> <span>{job?.VpapId == null ? 'No' : 'Yes'}</span>
-                      </li>
+                      <Form.Group controlId="pieces">
+                        <Form.Label>Pieces</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.pieces || ""} />
+                      </Form.Group>
                     </Col>
 
                     <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Attachment:</b>{' '}
-                        <span>
-                          <p
-                            onClick={handleAttachmentShow}
-                            className="m-0 p-0"
-                            style={{
-                              color: '#007bff',
-                              cursor: 'pointer',
-                              textDecoration: 'underline',
+                      <Form.Group controlId="weight">
+                        <Form.Label>Weight (KG)</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.weight || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="serviceType">
+                        <Form.Label>Service Type</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.serviceTypeId?.text || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="serviceCode">
+                        <Form.Label>Service Code</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.serviceCodeId?.text || ""} />
+                      </Form.Group>
+                    </Col>
+
+
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="vpapSubmitted">
+                        <Form.Label>VPAP Submitted</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.VpapId == null ? "No" : "Yes"} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="fuelSurcharge">
+                        <Form.Label>Fuel Surcharge</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.fuel_charge || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="rates">
+                        <Form.Label>Rates</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.rates || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="invoiceNumber">
+                        <Form.Label>Invoice Number</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.invoice_number || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="invoices">
+                        <Form.Label>Invoices</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.is_invoices ? "Yes" : "No"} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="createdBookingTime">
+                        <Form.Label>Created Booking Time</Form.Label>
+                        <Form.Control
+                          type="text"
+                          readOnly
+                          value={getFormattedDAndT(job?.createdDateTime) || ""}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="waitTimeCharge">
+                        <Form.Label>Wait Time Charge</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.wait_time_charge || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="adminNote">
+                        <Form.Label>Admin Note</Form.Label>
+                        <Form.Control as="textarea" rows={3} readOnly value={job?.adminNote || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="driverNote">
+                        <Form.Label>Driver Note</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          readOnly
+                          value={job?.driverNote?.map((n, i) =>
+                            `${i + 1}. ${n.text} (${new Date(n.createdAt).toLocaleString()})`
+                          ).join('\n') || ""}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    {/* <Col md={6} className="mb-3">
+                      <Form.Group controlId="referenceNumber">
+                        <Form.Label>Reference No</Form.Label>
+                        <Form.Control type="text" readOnly value={job?.custRefNumber || ""} />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="note">
+                        <Form.Label>Note</Form.Label>
+                        <Form.Control as="textarea" rows={2} readOnly value={job?.note || ""} />
+                      </Form.Group>
+                    </Col> */}
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="attachment">
+                        <Form.Label>Attachment</Form.Label>
+                        <div
+                          onClick={handleAttachmentShow}
+                          className="border border-dashed py-2 px-3 mb-1 d-flex align-items-center justify-content-start"
+                          style={{ cursor: 'pointer', backgroundColor: '#f8f9fa' }}
+                        >
+                          <Button
+                            className="me-3 custom-btn"
+                            variant="secondary"
+                            onClick={(e) => {
+                              e.stopPropagation(); // prevent triggering parent div's onClick
+                              handleAttachmentShow();
                             }}
                           >
-                            View Attachments
-                          </p>
-                        </span>
-                      </li>
+                            View Attachment
+                          </Button>
+                        </div>
+                        <small className="text-muted">
+                          Please ensure that the file size does not exceed 5MB and that it is in either PNG or JPG format.
+                        </small>
+                      </Form.Group>
                     </Col>
 
                     <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Rates:</b> <span>{job?.rates}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Fuel Surcharge:</b> <span>{job?.fuel_charge}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Invoices:</b> <span>{job?.is_invoices ? 'Yes' : 'No'}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Invoice Number:</b> <span>{job?.invoice_number}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Wait Time Charge:</b> <span>{job?.wait_time_charge}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Created Booking Time:</b>{' '}
-                        <span>{getFormattedDAndT(job?.createdDateTime)}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3 d-flex align-items-center">
-                      <Form.Group>
+                      <Form.Group controlId="adminReviewCheckbox">
                         <Form.Check
                           type="checkbox"
-                          label="Admin Review"
+                          label="Admin Review for manual pricing"
                           checked={isAdminReview}
                           className="custom-checkbox"
                           onChange={(e) => setIsAdminReview(e.target.checked)}
@@ -375,201 +470,412 @@ export default function ClientJobDetails() {
                   </Row>
                 </ul>
               </>
-            ) : activeBtn === 'clientDetails' ? (
-              <>
-                <h4 className="text-center mb-4">Client Details</h4>
-                <ul className="m-0 p-0 custom-list-main">
-                  <Row>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Username:</b> <span>{job?.clientId?.username}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Full Name:</b>{' '}
-                        <span>
-                          {job?.clientId?.firstname} {job?.clientId?.lastname}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Email:</b> <span>{job?.clientId?.email}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Phone:</b> <span>{job?.clientId?.phone}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Company name:</b> <span>{job?.clientId?.companyName}</span>
-                      </li>
-                    </Col>
-                    {job?.booked_by ? (
-                      <Col md={6} className="mb-3">
-                        <li className="custom-list">
-                          <b>Booked By:</b> <span>{job?.booked_by}</span>
-                        </li>
-                      </Col>
-                    ) : (
-                      ''
-                    )}
-                    {job?.clientId?.isDriverPermission ? (
-                      <Col md={6} className="mb-3">
-                        <li className="custom-list">
-                          <b>Driver Assigning Permission:</b>{' '}
-                          <span>
-                            <FaCheckCircle className="text-success" />
-                          </span>
-                        </li>
-                      </Col>
-                    ) : (
-                      ''
-                    )}
-                  </Row>
-                </ul>
-              </>
-            ) : activeBtn === 'driverAttachments' ? (
-              <>
-                <h4 className="text-center mb-4">Driver Attachments</h4>
-                <ViewDriverUploads
-                  captures={job?.capturedPic}
-                  Rname={job?.signature_name}
-                  RSign={job?.deliveredVerificationImage}
-                />
-              </>
-            ) : activeBtn === 'pickupDetails' ? (
-              <>
-                <h4 className="text-center mb-4">Pickup Details</h4>
-                <ul className="m-0 p-0 custom-list-main">
-                  <Row>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Ready Time:</b>{' '}
-                        <span>
-                          {job?.pickUpDetails?.readyTime
-                            ? getFormattedDAndT(job?.pickUpDetails?.readyTime)
-                            : ''}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Pick Up Location:</b>{' '}
-                        <span>{job?.pickUpDetails?.pickupLocationId?.customName}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Arrival Time:</b>{' '}
-                        <span>
-                          {job?.pickUpDetails?.arrivalTime
-                            ? getFormattedDAndT(job?.pickUpDetails?.arrivalTime)
-                            : ''}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Picked Up Time:</b>{' '}
-                        <span>
-                          {job?.pickUpDetails?.pickedUpTime
-                            ? getFormattedDAndT(job?.pickUpDetails?.pickedUpTime)
-                            : ''}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Pickup Address:</b> <span>{pickupLocationName}</span>
-                      </li>
-                    </Col>
-                  </Row>
-                </ul>
-              </>
-            ) : (
-              <>
-                <h4 className="text-center mb-4">Drop of Details</h4>
-                <ul className="m-0 p-0 custom-list-main">
-                  <Row>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Cut off Time:</b>{' '}
-                        <span>
-                          {job?.dropOfDetails?.cutOffTime
-                            ? getFormattedDAndT(job?.dropOfDetails?.cutOffTime)
-                            : ''}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Drop Off Location:</b>{' '}
-                        <span>{job?.dropOfDetails?.dropOfLocationId?.customName}</span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Arrival Time:</b>{' '}
-                        <span>
-                          {job?.dropOfDetails?.arrivalTime
-                            ? getFormattedDAndT(job?.dropOfDetails?.arrivalTime)
-                            : ''}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Delivered Time:</b>{' '}
-                        <span>
-                          {job?.dropOfDetails?.deliveredTime
-                            ? getFormattedDAndT(job?.dropOfDetails?.deliveredTime)
-                            : ''}
-                        </span>
-                      </li>
-                    </Col>
-                    <Col md={6} className="mb-3">
-                      <li className="custom-list">
-                        <b>Delivery Address:</b> <span>{deliveryLocationName}</span>
-                      </li>
-                    </Col>
-                  </Row>
-                </ul>
-              </>
-            )}
-          </Container>
+            </Tab>
 
-          <Row className="mt-1">
-            <Col className="d-flex align-item-center justify-content-end gap-2 py-3">
-              <EditJobAdmin job={job} setIsRefresh={setIsRefresh} isReferesh={isRefresh} />
-              <Button variant="primary" onClick={() => handleShow()}>
-                {' '}
-                Change Status{' '}
-              </Button>
-              {job?.VpapId == null ? <Button
-                className="text-white"
-                variant="success"
-                onClick={() => navigate(`/client/vpap/add/${id}`)}
-              >
-                {' '}
-                Add Vpap
-              </Button> : null}
-              <Button
-                style={{ background: '#9B59B6', borderColor: '#9B59B6' }}
-                onClick={() => navigate(`/location/${id}`)}
-              >
-                {' '}
-                Track Driver{' '}
-              </Button>
-              <Button variant="danger" className="text-white" onClick={handleCancleBooking}>
-                {' '}
-                Cancel Booking{' '}
-              </Button>
-            </Col>
-          </Row>
+            {/* Client Details */}
+            <Tab eventKey="clientDetails" title="Client Details">
+              <>
+                <ul className="m-0 custom-list-main">
+                  <Row>
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="username">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={job?.clientId?.username || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="fullName">
+                        <Form.Label>Full Name</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={`${job?.clientId?.firstname || ""} ${job?.clientId?.lastname || ""}`}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="email">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                          type="email"
+                          value={job?.clientId?.email || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="phone">
+                        <Form.Label>Phone</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={job?.clientId?.phone || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="companyName">
+                        <Form.Label>Company Name</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={job?.clientId?.companyName || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    {job?.booked_by && (
+                      <Col md={6} className="mb-3">
+                        <Form.Group controlId="bookedBy">
+                          <Form.Label>Booked By</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={job?.booked_by}
+                            disabled
+                          />
+                        </Form.Group>
+                      </Col>
+                    )}
+
+                    {job?.clientId?.isDriverPermission && (
+                      <Col md={6} className="mb-3 d-flex align-items-center">
+                        <Form.Group controlId="driverAssignPermission" className="mb-0">
+                          <Form.Check
+                            type="checkbox"
+                            label="Driver Assigning Permission"
+                            checked={true}
+                            disabled
+                          />
+                        </Form.Group>
+                      </Col>
+                    )}
+                  </Row>
+                </ul>
+              </>
+            </Tab>
+
+            {/* Driver Attachments */}
+            <Tab eventKey="driverAttachments" title="Driver Attachments">
+              <>
+              <div className="custom-list-main d-flex flex-row align-items-center justify-content-center">
+                <ViewDriverUploads
+                    captures={job?.capturedPic}
+                    Rname={job?.signature_name}
+                    RSign={job?.deliveredVerificationImage}
+                  />
+              </div>
+              </>
+            </Tab>
+
+            {/* Pickup Details */}
+            <Tab eventKey="pickupDetails" title="Pickup Details">
+              <>
+                <ul className="m-0 custom-list-main">
+                  <Row>
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="readyTime">
+                        <Form.Label>Ready Time</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={
+                            job?.pickUpDetails?.readyTime
+                              ? getFormattedDAndT(job?.pickUpDetails?.readyTime)
+                              : ""
+                          }
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="pickupLocation">
+                        <Form.Label>Pick Up Location</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={job?.pickUpDetails?.pickupLocationId?.customName || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="arrivalTime">
+                        <Form.Label>Arrival Time</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={
+                            job?.pickUpDetails?.arrivalTime
+                              ? getFormattedDAndT(job?.pickUpDetails?.arrivalTime)
+                              : ""
+                          }
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="pickedUpTime">
+                        <Form.Label>Picked Up Time</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={
+                            job?.pickUpDetails?.pickedUpTime
+                              ? getFormattedDAndT(job?.pickUpDetails?.pickedUpTime)
+                              : ""
+                          }
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="pickupAddress">
+                        <Form.Label>Pickup Address</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={pickupLocationName || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </ul>
+              </>
+            </Tab>
+
+            {/* Drop Details */}
+            <Tab eventKey="dropDetails" title="Drop Details">
+              <>
+                <ul className="m-0 custom-list-main">
+                  <Row>
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="cutOffTime">
+                        <Form.Label>Cut Off Time</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={
+                            job?.dropOfDetails?.cutOffTime
+                              ? getFormattedDAndT(job?.dropOfDetails?.cutOffTime)
+                              : ""
+                          }
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="dropOffLocation">
+                        <Form.Label>Drop Off Location</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={job?.dropOfDetails?.dropOfLocationId?.customName || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="arrivalTimeDrop">
+                        <Form.Label>Arrival Time</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={
+                            job?.dropOfDetails?.arrivalTime
+                              ? getFormattedDAndT(job?.dropOfDetails?.arrivalTime)
+                              : ""
+                          }
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="deliveredTime">
+                        <Form.Label>Delivered Time</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={
+                            job?.dropOfDetails?.deliveredTime
+                              ? getFormattedDAndT(job?.dropOfDetails?.deliveredTime)
+                              : ""
+                          }
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6} className="mb-3">
+                      <Form.Group controlId="deliveryAddress">
+                        <Form.Label>Delivery Address</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={deliveryLocationName || ""}
+                          disabled
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </ul>
+              </>
+            </Tab>
+
+            {/* Invoices */}
+            <Tab eventKey="invoices" title="Invoices" className="client-rates-table">
+              <div className="table-responsive">
+                <Table responsive hover bordered>
+                  <thead>
+                    <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                      <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
+                        Client
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('pickUpDetails.readyTime')} >
+                        Ready Time
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('dropOfDetails.cutOffTime')}>
+                        Cutoff Time
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('AWB')}>
+                        AWB
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('pieces')}>
+                        Pieces
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('serviceTypeId.text')}>
+                        Service Type
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('serviceCodeId.text')}>
+                        Service Code
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')}>
+                        Pickup From
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')}>
+                        Deliver To
+                      </th>
+                      {/* <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
+                    Job ID
+                  </th> */}
+                      <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
+                        Driver
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('rates')}>
+                        Rates
+                      </th>
+                      <th className="text-center" onClick={() => handleSort('is_invoices')}>
+                        Invoiced
+                      </th>
+                      <th className="text-center" colSpan={2}>Actions</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {message ? (
+                      <tr>
+                        <td colSpan={14} className="text-center text-danger">{message}</td>
+                      </tr>
+                    ) : loading ? (
+                      <tr>
+                        <td colSpan={14} className="text-center"><Spinner animation="border" variant="primary" /></td>
+                      </tr>
+                    ) : (
+                      data && data.map((item, index) => {
+                        const isSelected = item._id === selectedItem._id;
+                        const status = item?.isHold ? 'Hold' : item?.currentStatus;
+                        const styles = getStatusStyles(status);
+
+                        const tdStyle = {
+                          backgroundColor: isSelected ? '#E0E0E0' : 'transparent',
+                          fontSize: 13,
+                          textAlign: 'left',
+                        };
+
+                        return (
+                          <tr key={index} className="cursor-pointer">
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.clientId?.companyName}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {getFormattedDAndT(item?.pickUpDetails?.readyTime)}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {getFormattedDAndT(item?.dropOfDetails?.cutOffTime)}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.AWB}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.pieces}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.serviceTypeId?.text}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.serviceCodeId?.text}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.pickUpDetails?.pickupLocationId?.customName}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.dropOfDetails?.dropOfLocationId?.customName}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.driverId ? `${item.driverId.firstname}-${item.driverId.lastname}` : ''}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.rates != null ? item.rates : '—'}
+                            </td>
+                            <td onClick={() => handleView(item)} style={tdStyle}>
+                              {item?.is_invoices === true ? 'Yes' : 'No'}
+                            </td>
+                            <td className="text-center action-dropdown-menu" style={tdStyle}>
+                              <div className="dropdown">
+                                <button
+                                  className="btn btn-link p-0 border-0"
+                                  type="button"
+                                  id={`dropdownMenuButton-${item._id}`}
+                                  data-bs-toggle="dropdown"
+                                  aria-expanded="false"
+                                >
+                                  <BsThreeDotsVertical size={18} />
+                                </button>
+                                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby={`dropdownMenuButton-${item._id}`}>
+                                  <li>
+                                    <button
+                                      className="dropdown-item"
+                                      onClick={() => setActiveTab('jobDetails')}
+                                    >
+                                      View Details
+                                    </button>
+                                  </li>
+                                  <li>
+                                    <button
+                                      className="dropdown-item"
+                                      onClick={() => setActiveTab('jobDetails')}
+                                    >
+                                      Add Manual Pricing
+                                    </button>
+                                  </li>
+                                </ul>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </Table>
+              </div>
+            </Tab>
+          </Tabs>
 
           <Modal show={show} onHide={handleClose}>
             <Modal.Header className="border-0 text-center w-100">
