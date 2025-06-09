@@ -8,6 +8,7 @@ import moment from 'moment-timezone';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { CButton } from '@coreui/react'
 
 function AddJobs() {
   const navigate = useNavigate()
@@ -434,25 +435,35 @@ function AddJobs() {
 
   return (
     <>
-      {/* <Row>
+      <Row className="align-items-center">
         <Col>
-          <h5>Add Booking for client</h5>
+          <h4 className="mb-0">New Booking</h4>
         </Col>
-      </Row> */}
-      <Container className="shadow px-3 py-3 rounded-4 bg-white">
+        <Col className="text-end">
+          {loading5 ? (
+            <Spinner animation="border" />
+          ) : (
+            <CButton className="custom-btn" onClick={handleSubmit}>
+              Add Booking
+            </CButton>
+          )}
+        </Col>
+      </Row>
+      <Container className="mt-3 px-3 py-3 bg-white custom-form">
         <Row>
-          <Col md={6} className="mt-3">
+          <Col md={6}>
             <Form.Group>
               <Form.Label>Client</Form.Label>
               <Select
-                className="w-100"
+                className="w-100 custom-select"
+                classNamePrefix="custom-select"
                 options={clientOptions}
                 value={dropDownData.selectedClient._id ? {
                   value: dropDownData.selectedClient._id,
                   label: dropDownData.selectedClient.name
                 } : null}
                 onChange={handleSelectChange}
-                placeholder="Select Client"
+                placeholder="Select from the list"
                 isSearchable
               />
               {/* <Dropdown>
@@ -493,21 +504,21 @@ function AddJobs() {
               ) : null}
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
-          <Col md={6} className="mt-3">
+          <Col md={6}>
             <Form.Group>
-              <Form.Label>AWB</Form.Label>
+              <Form.Label>Customer Reference No</Form.Label>
               <Form.Control
                 type="text"
-                name="AWB"
                 placeholder="Text"
+                name="custRefNumber"
                 maxLength={30}
                 onChange={(e) => handleChange(e)}
-                value={formData?.AWB}
+                value={formData?.custRefNumber}
               />
             </Form.Group>
           </Col>
+        </Row>
+        <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Pieces</Form.Label>
@@ -521,8 +532,6 @@ function AddJobs() {
               />
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Weight</Form.Label>
@@ -536,6 +545,8 @@ function AddJobs() {
               />
             </Form.Group>
           </Col>
+        </Row>
+        <Row>
           <Col md={6} className="mt-3">
             <Form.Label>Service Type</Form.Label>
             {/* <Dropdown data-bs-theme="primary">
@@ -575,7 +586,8 @@ function AddJobs() {
               </Dropdown.Menu>
             </Dropdown> */}
             <Select
-              className="w-100"
+              className="w-100 custom-select"
+              classNamePrefix="custom-select"
               options={serviceTypeOptions}
               value={
                 dropDownData.serviceType._id
@@ -593,26 +605,12 @@ function AddJobs() {
               <Form.Text className="text-danger">{errors.serviceTypeId}</Form.Text>
             ) : null}
           </Col>
-        </Row>
-        <Row>
-          <Col md={6} className="mt-3">
-            <Form.Group>
-              <Form.Label>Customer Reference No</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Text"
-                name="custRefNumber"
-                maxLength={30}
-                onChange={(e) => handleChange(e)}
-                value={formData?.custRefNumber}
-              />
-            </Form.Group>
-          </Col>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Service Code</Form.Label>
               <Select
-                className="w-100"
+                className="w-100 custom-select"
+                classNamePrefix="custom-select"
                 options={serviceCodeOptions}
                 value={
                   dropDownData.serviceCode._id
@@ -714,7 +712,8 @@ function AddJobs() {
             <Form.Group>
               <Form.Label>Pickup Location</Form.Label>
               <Select
-                className="w-100"
+                className="w-100 custom-select"
+                classNamePrefix="custom-select"
                 options={pickupOptions}
                 value={
                   dropDownData.pickupLocation._id
@@ -773,7 +772,8 @@ function AddJobs() {
             <Form.Group>
               <Form.Label>Drop Location</Form.Label>
               <Select
-                className="w-100"
+                className="w-100 custom-select"
+                classNamePrefix="custom-select"
                 options={dropOptions}
                 value={
                   dropDownData.dropLocation._id
@@ -832,34 +832,6 @@ function AddJobs() {
         <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
-              <Form.Label>Note</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                placeholder="Enter your note here..."
-                name="note"
-                onChange={(e) => handleChange(e)}
-                value={formData?.note}
-              />
-            </Form.Group>
-          </Col>
-          <Col md={6} className="mt-3">
-            <Form.Group>
-              <Form.Label>Admin Note</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                placeholder="Enter your note here..."
-                name="adminNote"
-                onChange={(e) => handleChange(e)}
-                value={formData?.adminNote}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6} className="mt-3">
-            <Form.Group>
               <Form.Label>Upload Attachment</Form.Label>
               <Form.Control
                 type="file"
@@ -870,25 +842,71 @@ function AddJobs() {
               />
             </Form.Group>
           </Col>
-          {dropDownData.serviceType.text?.toUpperCase() === 'AIR IMPORT ' && (
-            <Col className="mt-3 w-100">
-              <Form.Group>
-                <Form.Label>Is VPAP</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="isVpap"
-                  onChange={(e) => handleChange(e)}
-                  value={formData?.isVpap}
-                >
-                  <option value="">Select</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </Form.Control>
-              </Form.Group>
-            </Col>
-          )}
+          {/* {dropDownData.serviceType.text?.toUpperCase() === 'AIR IMPORT ' && ( */}
+          <Col className="mt-3 w-100">
+            <Form.Group>
+              <Form.Label>Is VPAP</Form.Label>
+              <Form.Control
+                as="select"
+                name="isVpap"
+                onChange={(e) => handleChange(e)}
+                value={formData?.isVpap}
+              >
+                <option value="">Select</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          {/* )} */}
         </Row>
         <Row>
+          <Col md={6} className="mt-3">
+            <Form.Group>
+              <Form.Label>Note</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={5}
+                placeholder="Enter your note here..."
+                name="note"
+                onChange={(e) => handleChange(e)}
+                value={formData?.note}
+              />
+            </Form.Group>
+          </Col>
+          <Col md={6} className="mt-3">
+            <Row>
+              <Col md={12} className="mb-3">
+                <Form.Group>
+                  <Form.Label>AWB</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="AWB"
+                    placeholder="Text"
+                    maxLength={30}
+                    onChange={(e) => handleChange(e)}
+                    value={formData?.AWB}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Admin Note</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={1}
+                    placeholder="Enter your note here..."
+                    name="adminNote"
+                    onChange={(e) => handleChange(e)}
+                    value={formData?.adminNote}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
+        {/* <Row>
           <Col md={3} className="mt-3">
             {loading5 ? (
               <Spinner animation="border" />
@@ -897,8 +915,8 @@ function AddJobs() {
                 Add Booking
               </Button>
             )}
-          </Col>
-        </Row>
+          </Col> 
+        </Row> */}
       </Container>
     </>
   )

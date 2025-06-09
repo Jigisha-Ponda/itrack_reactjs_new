@@ -5,7 +5,7 @@ import { getJobCountByStatus } from '../../services/getTotalDocs'
 import { getTotalDocs } from '../../services/getTotalDocs'
 import { useState, useEffect } from "react";
 import GraphReport from './graphReport';
-
+import { Row, Col } from 'react-bootstrap';
 
 export default function Report() {
     const [loading, setLoading] = useState(true);
@@ -69,6 +69,11 @@ export default function Report() {
     }, []);
     return (
         <>
+            <Row className="align-items-center">
+                <Col>
+                    <h4 className="mb-3">Reports</h4>
+                </Col>
+            </Row>
             {
                 loading ? (
                     <div className="d-flex justify-content-center align-items-center">
@@ -79,6 +84,11 @@ export default function Report() {
                 ) : (
                     <>
                         <WidgetsDropdown className="mb-4" role="admin" data={data} />
+                        <Row className="align-items-center">
+                            <Col>
+                                <h4 className="mt-4 mb-0">Job Statistics Overview</h4>
+                            </Col>
+                        </Row>
                         <div className="mt-5">
                             < GraphReport data={data} />
                         </div>

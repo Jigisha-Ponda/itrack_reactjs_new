@@ -23,6 +23,10 @@ import { IoMdAdd } from 'react-icons/io'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useColorModes } from '@coreui/react'
 import { get } from '../../lib/request'
+import Select, { components } from 'react-select';
+import { FaCheck } from 'react-icons/fa';
+import { BsThreeDotsVertical } from 'react-icons/bs'
+
 function AllClientsJob() {
   const { id } = useParams()
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -55,12 +59,66 @@ function AllClientsJob() {
       }
     })
   }, [])
+
+  const [selectedColumns, setSelectedColumns] = useState([]);
+
+  const columnOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'client', label: 'Client' },
+    { value: 'readyTime', label: 'Ready Time' },
+    { value: 'cutoffTime', label: 'Cutoff Time' },
+    { value: 'awb', label: 'AWB' },
+    { value: 'pieces', label: 'Pieces' },
+    { value: 'serviceType', label: 'Service Type' },
+    { value: 'serviceCode', label: 'Service Code' },
+    { value: 'pickupFrom', label: 'Pickup From' },
+    { value: 'deliveryTo', label: 'Delivery To' },
+    { value: 'driver', label: 'Driver' },
+    { value: 'notes', label: 'Notes' },
+    { value: 'status', label: 'Status' },
+  ]
+  const handleColumnSelect = (option) => {
+    setSelectedColumns(option)
+    // If you want to filter data by selected column:
+    // setSearchQuery({ ...searchQuery, selectedColumn: option.value })
+  }
+
+const customOption = (props) => {
+  const { isSelected, label } = props;
+  return (
+    <components.Option {...props}>
+      <div className="d-flex justify-content-between align-items-center">
+        <span>{label}</span>
+        {isSelected && <FaCheck className="text-primary" />}
+      </div>
+    </components.Option>
+  );
+};
   return (
     <>
+      <Row className="align-items-center">
+        <Col>
+          <h4 className="mb-0">Booking Details</h4>
+        </Col>
+        <Col>
+          <Select
+            className="ms-auto w-50 custom-select"
+            classNamePrefix="custom-select"
+            isMulti
+            options={columnOptions}
+            value={selectedColumns}
+            onChange={handleColumnSelect}
+            placeholder="Show only chosen columns"
+            isSearchable
+            closeMenuOnSelect={false}
+            components={{ Option: customOption }}
+          />
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 d-flex justify-content-between ">
+          <Container className="py-3 px-2 rounded-3">
+            {/* <Row className="mb-3 d-flex justify-content-between ">
               <Col md={12} className="d-flex align-items-center justify-content-between gap-2 ">
                 <div className="d-flex align-items-center gap-2">
                   show
@@ -82,89 +140,120 @@ function AllClientsJob() {
                   </div>
                 </Col>
               </Col>
-            </Row>
-            <Table className="mt-3" striped responsive hover>
-              <thead>
-                <tr>
-                  <th className="text-center">#</th>
-                  <th className="text-center">Job Id</th>
-                  <th className="text-center">Service Code</th>
-                  <th className="text-center">Client Name</th>
-                  <th className="text-center">AWB</th>
-                  <th className="text-center">Pickup From</th>
-                  <th className="text-center">Deliver To</th>
-                  <th className="text-center">Ready Time</th>
-                  <th className="text-center">Cuttoff Time</th>
-                  <th className="text-center">Status</th>
-                  <th className="text-center" colSpan={4}>
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {message ? (
+            </Row> */}
+            <div className="client-rates-table">
+            <Table bordered responsive hover className="custom-table">
+                <thead>
                   <tr>
-                    <td colSpan={12} className="text-center text-danger">
-                      {message}
-                    </td>
+                    <th className="text-center">#</th>
+                    <th className="text-center">Job Id</th>
+                    <th className="text-center">Service Code</th>
+                    <th className="text-center">Client Name</th>
+                    <th className="text-center">AWB</th>
+                    <th className="text-center">Pickup From</th>
+                    <th className="text-center">Deliver To</th>
+                    <th className="text-center">Ready Time</th>
+                    <th className="text-center">Cutoff Time</th>
+                    <th className="text-center" style={{width:'auto',minWidth:'170px'}}>Status</th>
+                    <th className="text-center" colSpan={4}>
+                      Actions
+                    </th>
                   </tr>
-                ) : loading ? (
-                  <tr>
-                    {' '}
-                    <Spinner animation="border" variant="primary" />
-                  </tr>
-                ) : (
-                  clients &&
-                  clients.map((item, index) => {
-                    return (
-                      <tr key={index}>
-                        <td className="text-center">{index + 1}</td>
-                        <td className="text-center">{item?.uid}</td>
-                        <td className="text-center">{item?.serviceCodeId?.text}</td>
-                        <td className="text-center">
-                          {item?.clientId?.firstname} {item?.clientId?.lastname}
-                        </td>
-                        <td className="text-center">{item?.AWB}</td>
-                        <td className="text-center">
-                          {item?.pickUpDetails?.pickupLocationId?.customName}
-                        </td>
-                        <td className="text-center">
-                          {item?.dropOfDetails?.dropOfLocationId?.customName}
-                        </td>
-                        <td className="text-center">{item?.pickUpDetails?.readyTime}</td>
-                        <td className="text-center">{item?.dropOfDetails?.cutOffTime}</td>
+                </thead>
+                <tbody>
+                  {message ? (
+                    <tr>
+                      <td colSpan={12} className="text-center text-danger">
+                        {message}
+                      </td>
+                    </tr>
+                  ) : loading ? (
+                    <tr>
+                      {' '}
+                      <Spinner animation="border" variant="primary" />
+                    </tr>
+                  ) : (
+                    clients &&
+                    clients.map((item, index) => {
+                      return (
+                        <tr key={index}>
+                          <td className="text-center">{index + 1}</td>
+                          <td className="text-center">{item?.uid}</td>
+                          <td className="text-center">{item?.serviceCodeId?.text}</td>
+                          <td className="text-center">
+                            {item?.clientId?.firstname} {item?.clientId?.lastname}
+                          </td>
+                          <td className="text-center">{item?.AWB}</td>
+                          <td className="text-center">
+                            {item?.pickUpDetails?.pickupLocationId?.customName}
+                          </td>
+                          <td className="text-center">
+                            {item?.dropOfDetails?.dropOfLocationId?.customName}
+                          </td>
+                          <td className="text-center">{item?.pickUpDetails?.readyTime}</td>
+                          <td className="text-center">{item?.dropOfDetails?.cutOffTime}</td>
 
-                        <td className="text-center">
-                          <div
-                            className="px-1 py-1 rounded-5 text-center"
-                            style={{ color: '#1F9254', backgroundColor: '#EBF9F1' }}
-                          >
-                            {item?.currentStatus}
-                          </div>
-                        </td>
-                        <td className="text-center cursor-pointer">
-                          <FaEye
-                            size={22}
-                            color="#0984E3"
-                            onClick={() => navigate(`/client/job/details/${item._id}`)}
-                          />
-                          {/* <FaEye onClick={handleShowModal} size={22} color="#0984E3" /> */}
-                        </td>
-                        <td className="text-center cursor-pointer">
-                          <FaRegEdit
-                            onClick={() => navigate('/client/edit/123')}
-                            size={22}
-                            color="#624DE3"
-                          />
-                        </td>
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            </Table>
-            <div className="d-flex justify-content-center">
-              <Pagination>
+                          <td className="text-center">
+                            <div
+                              className="px-1 py-1 rounded-5 text-center"
+                              style={{ color: '#1F9254', backgroundColor: '#EBF9F1' }}
+                            >
+                              {item?.currentStatus}
+                            </div>
+                          </td>
+                          <td className="text-center action-dropdown-menu">
+                            <div className="dropdown">
+                              <button
+                                className="btn btn-link p-0 border-0"
+                                type="button"
+
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                <BsThreeDotsVertical size={18} />
+                              </button>
+                              <ul className="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button
+                                    className="dropdown-item" onClick={() => navigate(`/client/job/details/${item._id}`)}
+                                  >
+                                    View Details
+                                  </button>
+                                </li>
+                                <li>
+                                  <button
+                                    className="dropdown-item" onClick={() => navigate('/client/edit/123')}
+                                  >
+                                    Edit Client
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                          </td>
+                          {/* <td className="text-center cursor-pointer">
+                            <FaEye
+                              size={22}
+                              color="#0984E3"
+                              onClick={() => navigate(`/client/job/details/${item._id}`)}
+                            />
+                          </td>
+                          <td className="text-center cursor-pointer">
+                            <FaRegEdit
+                              onClick={() => navigate('/client/edit/123')}
+                              size={22}
+                              color="#624DE3"
+                            />
+                          </td> */}
+                        </tr>
+                      )
+                    })
+                  )}
+                </tbody>
+              </Table>
+            </div>
+
+            {/* <div className="d-flex justify-content-center">
+              <Pagination className="my-pagination">
                 <Pagination.First />
                 <Pagination.Prev />
                 <Pagination.Item>{1}</Pagination.Item>
@@ -175,7 +264,30 @@ function AllClientsJob() {
                 <Pagination.Next />
                 <Pagination.Last />
               </Pagination>
-            </div>
+            </div> */}
+            <Row className="mb-3 justify-content-between">
+              <Col md={6} className="d-flex align-items-center gap-2">
+                Show Entries
+                <Form.Select className="page-entries">
+                  <option>10</option>
+                  <option>20</option>
+                  <option>30</option>
+                </Form.Select>
+              </Col>
+              <Col md={6} className="d-flex align-items-center justify-content-end">
+                <Pagination className="my-pagination">
+                  <Pagination.First />
+                  <Pagination.Prev />
+                  <Pagination.Item>{1}</Pagination.Item>
+                  <Pagination.Item>{2}</Pagination.Item>
+                  <Pagination.Item>{3}</Pagination.Item>
+                  <Pagination.Ellipsis />
+                  <Pagination.Item>{10}</Pagination.Item>
+                  <Pagination.Next />
+                  <Pagination.Last />
+                </Pagination>
+              </Col>
+            </Row>
           </Container>
         </Col>
         {/* Modal for showing details */}

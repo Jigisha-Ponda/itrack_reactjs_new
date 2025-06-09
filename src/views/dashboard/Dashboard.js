@@ -19,6 +19,7 @@ import sortData from '../../services/sortData'
 import { LuChevronDown } from 'react-icons/lu'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import FilterOffCanvas from '../../components/Filter'
+import MyPagination from '../../components/Pagination'
 
 const Dashboard = () => {
   const currentDate = getCurrentDate()
@@ -41,7 +42,7 @@ const Dashboard = () => {
   const handleShow = () => setShowCanvas(true);
   const [validated, setValidated] = useState(false)
   const [activeTab, setActiveTab] = useState("todaysJob");
-
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const handleEsc = (event) => {
@@ -244,6 +245,29 @@ const Dashboard = () => {
       setSelectedItem(JSON.parse(storedSelectedItem))
     }
   }, [])
+
+    // // Pagination
+    // const handlePageChange = (page) => {
+    //   setPage(page);
+    // };
+    // // Limit
+    // const handleLimitChange = (e) => {
+    //   setLimit(e.target.value)
+    //   setTotalPages(Math.ceil(totalDocs / e.target.value))
+    // }
+  
+    // useEffect(() => {
+    //   setLoading(true);
+    //   get(`/admin/info/jobFilter?page=${page}&limit=${limit}`, "admin").then((data) => {
+    //     setData(response?.data?.data)
+    //     setLoading(false)
+    //   }).catch((e) => {
+    //     console.log("errr", e.message);
+    //   })
+    //   // Getting total pages
+  
+    // }, [isReferesh, page, limit])
+  
 
   return (
     <>
@@ -461,10 +485,33 @@ const Dashboard = () => {
           </div>
         </Tab>
 
+        {/* <Row className="mb-3 justify-content-between">
+              <Col md={8} className="d-flex align-items-center gap-2 ">
+                Show Entries
+                <Col md={2}>
+                  <Form.Select
+                    value={limit}
+                    onChange={handleLimitChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={30}>30</option>
+                  </Form.Select>
+                </Col>
+              </Col>
+              <Col className="d-flex align-items-center justify-content-end">
+              <MyPagination
+                totalPages={totalPages}
+                currentPage={page}
+                onPageChange={handlePageChange}
+              />
+              </Col>
+            </Row> */}
+
         {/* All Jobs Tab */}
         <Tab eventKey="allJobs" title="All Jobs" className="client-rates-table">
           <div className="table-responsive">
-            <Table responsive hover bordered>
+            <Table responsive hover bordered className="custom-table">
               <thead>
                 <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
                   <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
@@ -504,7 +551,7 @@ const Dashboard = () => {
                   <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
                     Driver
                   </th>
-                  <th className="text-center" onClick={() => handleSort('currentStatus')}>
+                  <th className="text-center" onClick={() => handleSort('currentStatus')} style={{width:'auto',minWidth:'170px'}}>
                     Status
                   </th>
                   <th className="text-center" colSpan={2}>Actions</th>

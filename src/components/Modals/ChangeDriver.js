@@ -87,7 +87,7 @@ const ChangeDriverModal = ({ show, setShow, jobId, setIsRefresh, isReferesh, rol
     }, []); // Run once on component mount
 
     return (
-        <Modal show={show} onHide={handleClose} centered dialogClassName="change-driver-modal">
+        <Modal show={show} onHide={handleClose} centered dialogClassName="custom-modal">
             <Modal.Header closeButton>
                 <Modal.Title>Change Driver</Modal.Title>
             </Modal.Header>

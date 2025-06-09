@@ -19,6 +19,8 @@ import { deleteReq, get } from '../../lib/request'
 import sweetAlert from 'sweetalert2'
 import AddDropLocation from './AddDropLocation'
 import UpdateDropLocation from './UpdateDropLocation'
+import { CButton } from '@coreui/react'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 function AllDropLocation() {
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -86,10 +88,20 @@ function AllDropLocation() {
 
   return (
     <>
+    <Row className="align-items-center">
+        <Col>
+          <h4 className="mb-0">Service Code</h4>
+        </Col>
+        <Col className="text-end">
+          <CButton className="custom-btn" onClick={handleAddDropLocation}>
+            Add Drop Location
+          </CButton>
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 justify-content-between">
+          <Container className="py-3 px-2 rounded-3 client-rates-table">
+            {/* <Row className="mb-3 justify-content-between">
               <Col md={6}>
                 <Form.Control
                   type="text"
@@ -103,22 +115,22 @@ function AllDropLocation() {
                   <IoMdAdd /> Add Drop Location
                 </Button>
               </Col>
-            </Row>
+            </Row> */}
 
-            <Modal show={isAddSection} onHide={() => setIsAddSection(false)} dialogClassName="custom-modal-sm" centered>
+            <Modal show={isAddSection} onHide={() => setIsAddSection(false)} dialogClassName="custom-modal-sm custom-modal" centered>
               <Modal.Header closeButton>
                 <Modal.Title>Add Drop Location</Modal.Title>
               </Modal.Header>
-              <Modal.Body>
+              <Modal.Body className="pt-0">
                 <AddDropLocation isReferesh={isReferesh} setIsRefresh={setIsRefresh} />
               </Modal.Body>
             </Modal>
 
-            <Modal show={isUpdateSection} onHide={() => setUpdateSection(false)} dialogClassName="custom-modal-sm" centered>
+            <Modal show={isUpdateSection} onHide={() => setUpdateSection(false)} dialogClassName="custom-modal-sm custom-modal" centered>
               <Modal.Header closeButton>
                 <Modal.Title>Update Drop Location</Modal.Title>
               </Modal.Header>
-              <Modal.Body>
+              <Modal.Body className="pt-0">
                 <UpdateDropLocation
                   isReferesh={isReferesh}
                   setIsRefresh={setIsRefresh}
@@ -128,22 +140,21 @@ function AllDropLocation() {
             </Modal>
 
             <Table
-              className="mt-3 table-bordered"
-              striped
+              className="custom-table table-bordered"
               responsive
               hover
               style={{ minWidth: 1600 }}
             >
               <thead>
                 <tr>
-                  <th className="text-center px-4">#</th>
-                  <th className="text-center px-4">Custom Name</th>
-                  <th className="text-center px-4">Map Name</th>
-                  <th className="text-center px-4">Latitude</th>
-                  <th className="text-center px-4">Longitude</th>
-                  <th className="text-center px-4">Date</th>
-                  <th className="text-center px-4">Status</th>
-                  <th className="text-center px-4" colSpan={2}>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>#</th>
+                  <th className="text-start px-4">Custom Name</th>
+                  <th className="text-start px-4">Map Name</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>Latitude</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>Longitude</th>
+                  <th className="text-start px-4">Date</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '150px' }}>Status</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>
                     Action
                   </th>
                 </tr>
@@ -187,7 +198,35 @@ function AllDropLocation() {
                           {item.status}
                         </div>
                       </td>
-                      <td className="text-start px-4">
+                      <td className="text-center action-dropdown-menu">
+                        <div className="dropdown">
+                          <button
+                            className="btn btn-link p-0 border-0"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <BsThreeDotsVertical size={18} />
+                          </button>
+                          <ul className="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <button
+                                className="dropdown-item" onClick={() => handleUpdateDropLocation(item)}
+                              >
+                                Edit Details
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className="dropdown-item" onClick={() => handleDelete(item._id)}
+                              >
+                                Delete Drop Location
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      {/* <td className="text-start px-4">
                         <FaRegEdit
                           size={22}
                           color="#624DE3"
@@ -202,7 +241,7 @@ function AllDropLocation() {
                           onClick={() => handleDelete(item._id)}
                           style={{ cursor: 'pointer' }}
                         />
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 )}

@@ -8,6 +8,8 @@ import { useColorModes } from '@coreui/react'
 import { deleteReq, get, postWihoutMediaData, updateReq } from '../../lib/request'
 import sweetAlert from 'sweetalert2'
 import { getFormattedDAndT } from '../../lib/getFormatedDate'
+import { BsThreeDotsVertical } from 'react-icons/bs'
+import { CButton } from '@coreui/react'
 
 function AllServiceCode() {
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -75,19 +77,51 @@ function AllServiceCode() {
       })
       .catch(console.error)
   }
+   // Deleting the service code
+   const handleDelete = (Id) => {
+    sweetAlert
+      .fire({
+        title: 'Are you sure you want to delete this service code?',
+        text: 'Once deleted you can’t revert this action',
+        imageUrl: '/images/delete-modal-icon.png',
+        imageWidth: 60,
+        imageHeight: 60,
+        imageAlt: 'Delete Icon',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Delete it!',
+        cancelButtonText: 'No, Keep it',
+        customClass: {
+          confirmButton: 'btn btn-danger custom-btn-danger mx-2',
+          cancelButton: 'btn btn-primary custom-btn-primary'
+        },
+        buttonsStyling: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteReq(`/admin/service/code?ID=${id}`, 'admin').then((data) => {
+            sweetAlert.fire({ icon: 'success', title: 'Service Type Deleted Successfully!' })
+            setIsRefresh(!isReferesh)
 
-  const handleDelete = (id) => {
-    deleteReq(`/admin/service/code?ID=${id}`, 'admin')
-      .then((res) => {
-        if (res.data.status) {
-          sweetAlert.fire({ icon: 'success', title: 'Service Code Deleted Successfully!' })
-          setIsRefresh(!isReferesh)
+          }).catch((e) => {
+            console.log("Error while deleting:", e.message)
+          })
+        } else if (result.dismiss === sweetAlert.DismissReason.cancel) {
+          sweetAlert.fire('Cancelled', 'Your Service Code is safe :)', 'error')
         }
       })
-      .catch((e) => {
-        console.error('Error while deleting the service type', e.message)
-      })
+
   }
+  // const handleDelete = (id) => {
+  //   deleteReq(`/admin/service/code?ID=${id}`, 'admin')
+  //     .then((res) => {
+  //       if (res.data.status) {
+  //         sweetAlert.fire({ icon: 'success', title: 'Service Code Deleted Successfully!' })
+  //         setIsRefresh(!isReferesh)
+  //       }
+  //     })
+  //     .catch((e) => {
+  //       console.error('Error while deleting the service type', e.message)
+  //     })
+  // }
 
   useEffect(() => {
     setLoading(true)
@@ -105,10 +139,20 @@ function AllServiceCode() {
 
   return (
     <>
+      <Row className="align-items-center">
+        <Col>
+          <h4 className="mb-0">Service Code</h4>
+        </Col>
+        <Col className="text-end">
+          <CButton className="custom-btn" onClick={handleShowModal}>
+            Add Service Code
+          </CButton>
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 justify-content-between">
+          <Container className="py-3 px-2 rounded-3 client-rates-table">
+            {/* <Row className="mb-3 justify-content-between">
               <Col md={6}>
                 <Form.Control
                   type="text"
@@ -122,16 +166,16 @@ function AllServiceCode() {
                   <IoMdAdd /> Add Service Code
                 </Button>
               </Col>
-            </Row>
+            </Row> */}
 
-            <Table className="mt-3 table-bordered" striped responsive hover>
+            <Table className="custom-table table-bordered" responsive hover>
               <thead>
                 <tr>
-                  <th className="text-center px-4">#</th>
+                  <th className="text-center px-4" style={{ width: 'auto', minWidth: '70px' }}>#</th>
                   <th className="text-center px-4">Service Code</th>
                   <th className="text-center px-4">Date</th>
-                  <th className="text-center px-4">Status</th>
-                  <th className="text-center px-4" colSpan={2}>Action</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '150px' }}>Status</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,12 +208,40 @@ function AllServiceCode() {
                           {item.status}
                         </div>
                       </td>
-                      <td className="text-start px-4 cursor-pointer">
+                      <td className="text-center action-dropdown-menu">
+                        <div className="dropdown">
+                          <button
+                            className="btn btn-link p-0 border-0"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <BsThreeDotsVertical size={18} />
+                          </button>
+                          <ul className="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <button
+                                className="dropdown-item" onClick={() => handleShowModal2(item)}
+                              >
+                                Edit Details
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className="dropdown-item" onClick={() => handleDelete(item._id)}
+                              >
+                                Delete Service Code
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      {/* <td className="text-start px-4 cursor-pointer">
                         <FaRegEdit size={22} color="#624DE3" onClick={() => handleShowModal2(item)} />
                       </td>
                       <td className="text-start px-4 cursor-pointer">
                         <RiDeleteBin5Line size={22} color="#A30D11" onClick={() => handleDelete(item._id)} />
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 )}
@@ -208,9 +280,9 @@ function AllServiceCode() {
         </Modal>
 
         {/* Update Modal */}
-        <Modal show={showModal2} onHide={handleCloseModal2} style={{ marginTop: '10vh' }}>
+        <Modal show={showModal2} onHide={handleCloseModal2} style={{ marginTop: '10vh' }} dialogClassName="custom-modal">
           <Modal.Header closeButton>
-            <Modal.Title>Update Service Code</Modal.Title>
+            <Modal.Title>Edit Service Code</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Col md={12}>
@@ -226,12 +298,12 @@ function AllServiceCode() {
             </Col>
           </Modal.Body>
           <Modal.Footer className="border-0">
-            <Button style={{ backgroundColor: '#5856D5', color: '#ffffff' }} onClick={handelUpdateServiceCode}>
-              Update Service Code
+            <Button onClick={handelUpdateServiceCode}>
+              Confirm Change
             </Button>
-            <Button variant="secondary" onClick={handleCloseModal2}>
+            {/* <Button variant="secondary" onClick={handleCloseModal2}>
               Close
-            </Button>
+            </Button> */}
           </Modal.Footer>
         </Modal>
       </Row>

@@ -82,60 +82,60 @@ const UpdateLogoModal = ({ show, setShow, currentLogoUrl, onSave }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered dialogClassName="change-driver-modal">
+    <Modal show={show} onHide={handleClose} centered dialogClassName="custom-modal">
       <Modal.Header closeButton>
         <Modal.Title>View Logo</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-  <div className="text-center mb-3">
-    <Image
-      src={previewUrl}
-      alt="Logo Preview"
-      rounded
-      fluid
-      style={{ maxHeight: '150px', objectFit: 'contain' }}
-    />
-  </div>
+        <div className="text-center mb-3">
+          <Image
+            src={previewUrl}
+            alt="Logo Preview"
+            rounded
+            fluid
+            style={{ maxHeight: '150px', objectFit: 'contain' }}
+          />
+        </div>
 
-  {error && <Alert variant="danger">{error}</Alert>}
+        {error && <Alert variant="danger">{error}</Alert>}
 
-  {/* Hidden file input */}
-  <input
-    ref={fileInputRef}
-    type="file"
-    accept="image/png, image/jpg, image/jpeg"
-    style={{ display: 'none' }}
-    onChange={handleFileChange}
-  />
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png, image/jpg, image/jpeg"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
 
-  {/* Drag and drop area with upload button beside text */}
-  <h6>Update Logo</h6>
-  <div
-    onDrop={handleDrop}
-    onDragOver={handleDragOver}
-    className="border border-dashed py-2 px-3 mb-1 d-flex align-items-center justify-content-start"
-    style={{ cursor: 'pointer', backgroundColor: '#f8f9fa' }}
-    onClick={openFileDialog}
-  >
-    <Button
-    className="me-3 custom-btn"
-      variant="secondary"
-      onClick={(e) => {
-        e.stopPropagation(); // prevent triggering drag-drop area click
-        openFileDialog();
-      }}
-    >
-      Upload
-    </Button>
-    <div>
-      <p className="mb-0 text-secondary">or drag file here</p>
-    </div>
-    
-  </div>
-  <small className="text-muted">Please ensure that the file size does not exceed 5MB and that it is in either PNG or JPG format.</small>
+        {/* Drag and drop area with upload button beside text */}
+        <h6>Update Logo</h6>
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          className="border border-dashed py-2 px-3 mb-1 d-flex align-items-center justify-content-start"
+          style={{ cursor: 'pointer', backgroundColor: '#f8f9fa' }}
+          onClick={openFileDialog}
+        >
+          <Button
+            className="me-3 custom-btn"
+            variant="secondary"
+            onClick={(e) => {
+              e.stopPropagation(); // prevent triggering drag-drop area click
+              openFileDialog();
+            }}
+          >
+            Upload
+          </Button>
+          <div>
+            <p className="mb-0 text-secondary">or drag file here</p>
+          </div>
 
-</Modal.Body>
+        </div>
+        <small className="text-muted">Please ensure that the file size does not exceed 5MB and that it is in either PNG or JPG format.</small>
+
+      </Modal.Body>
 
 
       <Modal.Footer>

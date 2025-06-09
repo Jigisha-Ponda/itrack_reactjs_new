@@ -65,6 +65,7 @@ const DefaultLayout = () => {
           padding: '1rem',
           boxSizing: 'border-box',
           minWidth: 0, 
+          backgroundColor:'#F1F6F9'
         }}
       >
         <AppContent />

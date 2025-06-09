@@ -10,7 +10,9 @@ import sweetAlert from 'sweetalert2'
 import { getTotalDocs } from '../../services/getTotalDocs'
 import MyPagination from '../../components/Pagination'
 import Moment from 'react-moment'
-
+import { CButton } from '@coreui/react'
+import { FaArrowRight } from 'react-icons/fa'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 const AllDrivers = () => {
   const navigate = useNavigate()
   const [show, setShow] = useState(false)
@@ -98,10 +100,21 @@ const AllDrivers = () => {
 
   return (
     <>
+      <Row className="align-items-center">
+        <Col>
+          <h4 className="mb-0">All Driver</h4>
+        </Col>
+        <Col className="text-end">
+          <CButton className="custom-btn" onClick={() => navigate('/driver/add')} >
+            Add Driver
+            <FaArrowRight size={12} className="ms-2" />
+          </CButton>
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 justify-content-between">
+          <Container className="py-3 px-2 rounded-3 client-rates-table">
+            {/* <Row className="mb-3 justify-content-between">
               <Col md={8} className="d-flex align-items-center gap-2 ">
                 Show
                 <Col md={2}>
@@ -120,17 +133,17 @@ const AllDrivers = () => {
                   <IoMdAdd /> Add Driver
                 </Button>
               </Col>
-            </Row>
+            </Row> */}
 
-            <Table className="mt-3 table-bordered" striped responsive hover>
+            <Table className="table-bordered custom-table" responsive hover>
               <thead>
                 <tr>
-                  <th className="text-center px-4">#</th>
-                  <th className="text-center px-4">Full Name</th>
-                  <th className="text-center px-4">Email</th>
-                  <th className="text-center px-4">Phone</th>
-                  <th className="text-center px-4">Registered Date</th>
-                  <th className="text-center px-4" colSpan={4}>Action</th>
+                  {/* <th className="text-center px-4">#</th> */}
+                  <th className="text-start px-4" style={{width:'auto',minWidth:'300px'}}>Full Name</th>
+                  <th className="text-start px-4">Email</th>
+                  <th className="text-start px-4">Phone</th>
+                  <th className="text-start px-4" style={{width:'auto',minWidth:'250px'}}>Registered Date</th>
+                  <th className="text-start px-4" style={{width:'auto',minWidth:'auto'}}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,14 +156,50 @@ const AllDrivers = () => {
                 )}
                 {allDrivers && allDrivers.map((item, index) => (
                   <tr key={index}>
-                    <td className="text-start px-4">{index + 1}</td>
+                    {/* <td className="text-start px-4">{index + 1}</td> */}
                     <td className="text-start px-4">{item?.firstname} {item?.lastname}</td>
                     <td className="text-start px-4">{item.email}</td>
                     <td className="text-start px-4">{item.phone}</td>
                     <td className="text-start px-4">
                       <Moment format="DD/MM/YYYY, hh:mm a">{item.createdDateTime}</Moment>
                     </td>
-                    <td className="text-start px-4">
+                    <td className="text-center action-dropdown-menu">
+                          <div className="dropdown">
+                            <button
+                              className="btn btn-link p-0 border-0"
+                              type="button"
+
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              <BsThreeDotsVertical size={18} />
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <button
+                                  className="dropdown-item" onClick={() => navigate(`/driver/edit/${item._id}`)}
+                                >
+                                  View/Edit Details
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item" onClick={() => navigate(`/driver/jobs/${item._id}`)}
+                                >
+                                  Booking Details
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item" onClick={() => handleDelete(item._id)}
+                                >
+                                  Delete Driver
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                    {/* <td className="text-start px-4">
                       <FaRegEdit
                         size={22}
                         className="text-primary cursor-pointer"
@@ -177,20 +226,35 @@ const AllDrivers = () => {
                         className="text-danger cursor-pointer"
                         onClick={() => handleDelete(item._id)}
                       />
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>
             </Table>
 
 
-            <div className="d-flex justify-content-center">
-              <MyPagination
-                totalPages={totalPages}
-                currentPage={page}
-                onPageChange={handlePageChange}
-              />
-            </div>
+            <Row className="mb-3 justify-content-between">
+              <Col md={8} className="d-flex align-items-center gap-2 ">
+                Show Entries
+                <Col md={2}>
+                  <Form.Select className="page-entries"
+                    value={limit}
+                    onChange={handleLimitChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={30}>30</option>
+                  </Form.Select>
+                </Col>
+              </Col>
+              <Col className="d-flex align-items-center justify-content-end">
+                <MyPagination
+                  totalPages={totalPages}
+                  currentPage={page}
+                  onPageChange={handlePageChange}
+                />
+              </Col>
+            </Row>
           </Container>
         </Col>
       </Row>

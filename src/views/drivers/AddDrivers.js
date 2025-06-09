@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Button, Col, Container, Form, Row, Spinner } from 'react-bootstrap'
 import { get, post } from '../../lib/request.js'
 import sweetAlert from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
+import { CButton } from '@coreui/react'
 
 function AddDrivers() {
+  const formRef = useRef(); 
   const navigate = useNavigate()
   const [validated, setValidated] = useState(false)
   const [driverData, setDriverData] = useState({
@@ -40,7 +42,7 @@ function AddDrivers() {
     } else {
       event.preventDefault()
       setLoading(true)
-      if (driverData.firstname === '' || driverData.lastname === '' || driverData.email === '' || driverData.phone === '' ) {
+      if (driverData.firstname === '' || driverData.lastname === '' || driverData.email === '' || driverData.phone === '') {
         sweetAlert.fire({
           icon: 'error',
           title: 'Oops...',
@@ -97,77 +99,87 @@ function AddDrivers() {
 
   return (
     <>
-      <Container className="shadow px-3 py-3 rounded-4 bg-white">
-        <Form noValidate validated={validated} onSubmit={handleAddDriver}>
-          <Row>
-            <Col md={6} className="mt-3">
-              <Form.Group>
-                <Form.Label>First Name</Form.Label>
-                <Form.Control 
-                  type="text" 
-                  placeholder="Enter First Name"
-                  name='firstname' 
-                  onChange={handleChange} 
-                  value={driverData.firstname}
-                  required
-                />
-                <Form.Control.Feedback type="invalid">
-                  Please provide a first name.
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Col>
-            <Col md={6} className="mt-3">
-              <Form.Group>
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control 
-                  type="text" 
-                  placeholder="Enter Last Name"
-                  name='lastname' 
-                  onChange={handleChange} 
-                  value={driverData.lastname}
-                  required
-                />
-                <Form.Control.Feedback type="invalid">
-                  Please provide a last name.
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6} className="mt-3">
-              <Form.Group>
-                <Form.Label>Email</Form.Label>
-                <Form.Control 
-                  type="email" 
-                  placeholder="Enter Email Address"
-                  name='email' 
-                  onChange={handleChange} 
-                  value={driverData.email}
-                  required
-                />
-                <Form.Control.Feedback type="invalid">
-                  Please provide a valid email.
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Col>
-            <Col md={6} className="mt-3">
-              <Form.Group>
-                <Form.Label>Phone</Form.Label>
-                <Form.Control 
-                  type="text" 
-                  placeholder="Enter Phone"
-                  name='phone' 
-                  onChange={handleChange} 
-                  value={driverData.phone}
-                  required
-                />
-                <Form.Control.Feedback type="invalid">
-                  Please provide a phone number.
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Col>
-          </Row>
-          {/* <Row>
+        <Row className="align-items-center">
+          <Col>
+            <h4 className="mb-0">Add Driver</h4>
+          </Col>
+          <Col className="text-end">
+            <CButton className="custom-btn" onClick={() => formRef.current?.requestSubmit()}>
+              Add Driver
+            </CButton>
+          </Col>
+        </Row>
+        <div className="shadow bg-white px-3 py-3 mt-3 custom-form">
+          <Form ref={formRef} noValidate validated={validated} onSubmit={handleAddDriver}>
+            <Row>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>First Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter First Name"
+                    name='firstname'
+                    onChange={handleChange}
+                    value={driverData.firstname}
+                    required
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a first name.
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Last Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Last Name"
+                    name='lastname'
+                    onChange={handleChange}
+                    value={driverData.lastname}
+                    required
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a last name.
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} className="mt-3">
+                <Form.Group>
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter Email Address"
+                    name='email'
+                    onChange={handleChange}
+                    value={driverData.email}
+                    required
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid email.
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col md={6} className="mt-3">
+                <Form.Group>
+                  <Form.Label>Phone</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Phone"
+                    name='phone'
+                    onChange={handleChange}
+                    value={driverData.phone}
+                    required
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a phone number.
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            </Row>
+            {/* <Row>
             <Col md={6} className="mt-3">
               <Form.Group>
                 <Form.Label>Username</Form.Label>
@@ -185,8 +197,8 @@ function AddDrivers() {
               </Form.Group>
             </Col>
           </Row> */}
-          <Row>
-            {/* <Col md={6} className="mt-3">
+            <Row>
+              {/* <Col md={6} className="mt-3">
               <Form.Group>
                 <Form.Label>Password</Form.Label>
                 <Form.Control 
@@ -202,33 +214,33 @@ function AddDrivers() {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col> */}
-            <Col md={6} className="mt-3">
-              <Form.Group>
-                <Form.Label>Image (Optional)</Form.Label>
-                <Form.Control 
-                  type="file" 
-                  name='logo' 
-                  onChange={handleFileChange}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={3} className="mt-5">
-              {loading ? <Spinner animation="border" variant="success" /> : 
-                <Button 
-                  className="border-0" 
-                  style={{ backgroundColor: '#5856D5' }} 
-                  size="small" 
-                  type="submit"
-                >
-                  Add Driver
-                </Button>
-              }
-            </Col>
-          </Row>
-        </Form>
-      </Container>
+              <Col md={6} className="mt-3">
+                <Form.Group>
+                  <Form.Label>Image (Optional)</Form.Label>
+                  <Form.Control
+                    type="file"
+                    name='logo'
+                    onChange={handleFileChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            {/* <Row>
+              <Col md={3} className="mt-5">
+                {loading ? <Spinner animation="border" variant="success" /> :
+                  <Button
+                    className="border-0"
+                    style={{ backgroundColor: '#5856D5' }}
+                    size="small"
+                    type="submit"
+                  >
+                    Add Driver
+                  </Button>
+                }
+              </Col>
+            </Row> */}
+          </Form>
+        </div>
     </>
   )
 }

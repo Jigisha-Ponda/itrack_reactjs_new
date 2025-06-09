@@ -142,7 +142,7 @@ function AddClients() {
         </Col>
         <Col className={activeTab === 'addClient' ? 'text-end' : ''}>
           {activeTab === 'addClient' ? (
-            <CButton className="custom-btn"  onClick={() => formRef.current?.requestSubmit()}>
+            <CButton className="custom-btn" onClick={() => formRef.current?.requestSubmit()}>
               Add Client
             </CButton>
           ) : (
@@ -155,6 +155,8 @@ function AddClients() {
             //   <option value="HH22">HH22</option>
             // </Form.Select>
             <Select
+              className="w-100 custom-select"
+              classNamePrefix="custom-select"
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti

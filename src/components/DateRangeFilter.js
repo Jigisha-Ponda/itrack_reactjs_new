@@ -91,14 +91,13 @@ export default function DateRangeFilter({
           />
         </div>
         <div>
-        <Select
-                className="w-100"
-                options={columnOptions}
-                value={selectedColumn}
-                onChange={handleColumnSelect}
-                placeholder="Show only chosen columns"
-                isSearchable
-              />
+          <Select
+            options={columnOptions}
+            value={selectedColumn}
+            onChange={handleColumnSelect}
+            placeholder="Show only chosen columns"
+            isSearchable
+          />
           {/* <DropdownButton
             id="chosen-column-dropdown"
             title={selectedColumn}
@@ -111,7 +110,7 @@ export default function DateRangeFilter({
             <Dropdown.Item eventKey="Driver Name">Driver Name</Dropdown.Item>
           </DropdownButton> */}
         </div>
-        
+
       </div>
     </>
   )

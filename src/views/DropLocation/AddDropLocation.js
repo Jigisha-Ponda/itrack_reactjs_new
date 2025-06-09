@@ -57,7 +57,7 @@ export default function AddDropLocation({ isReferesh, setIsRefresh }) {
     }
 
     return (
-        <Container className='mt-2 mx-auto  p-3 rounded-5 h-auto' >
+        <Container className='mx-auto rounded-5 h-auto' >
             
             <Row>
                 <Form.Group>
@@ -78,7 +78,7 @@ export default function AddDropLocation({ isReferesh, setIsRefresh }) {
             </Row>
             <Row>
                 <Col  className='mt-3 mb-3  mx-auto' >
-                    <Button variant="primary" 
+                    <Button className="custom-btn w-100"
                         onClick={addDropLocation}
                     >Add Location</Button>
                 </Col>

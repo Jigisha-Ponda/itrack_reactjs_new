@@ -7,8 +7,10 @@ import {
   FaRegEdit,
   FaSearch,
   FaTruckMoving,
-  FaPlusCircle
+  FaPlusCircle,
+  FaArrowRight
 } from 'react-icons/fa'
+import { CButton } from '@coreui/react'
 import { RiDeleteBin5Line } from 'react-icons/ri'
 import { IoMdAdd } from 'react-icons/io'
 import { useNavigate } from 'react-router-dom'
@@ -20,6 +22,7 @@ import MyPagination from '../../components/Pagination'
 import { getTotalDocs } from '../../services/getTotalDocs'
 import sweetAlert from 'sweetalert2'
 import Moment from 'react-moment'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 function AllClients() {
   let imgSrc = process.env.Image_Src
@@ -66,7 +69,6 @@ function AllClients() {
           sweetAlert.fire('Cancelled', 'Your Client is safe :)', 'error')
         }
       })
-
   }
   // Pagination
   const handlePageChange = (page) => {
@@ -103,14 +105,24 @@ function AllClients() {
 
   return (
     <>
+      <Row className="align-items-center">
+        <Col>
+          <h4 className="mb-0">All Clients</h4>
+        </Col>
+        <Col className="text-end">
+          <CButton className="custom-btn" onClick={() => navigate('/client/add')} >
+            Add Client
+            <FaArrowRight size={12} className="ms-2" />
+          </CButton>
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 justify-content-between">
+          <Container className="py-3 px-2 rounded-3">
+            {/* <Row className="mb-3 justify-content-between">
               <Col md={8} className="d-flex align-items-center gap-2 ">
                 Show
                 <Col md={2}>
-                  {/* // seting limit */}
                   <Form.Select
                     value={limit}
                     onChange={handleLimitChange}
@@ -129,36 +141,73 @@ function AllClients() {
                   <IoMdAdd /> Add Client
                 </Button>
               </Col>
-            </Row>
-            <Table className="mt-3 table-bordered" striped responsive hover>
-              <thead>
-                <tr>
-                  <th className="text-center px-4">#</th>
-                  <th className="text-center px-4">Company Name</th>
-                  <th className="text-center px-4">Email</th>
-                  <th className="text-center px-4">Phone</th>
-                  <th className="text-center px-4">Registered Date</th>
-                  <th className="text-center px-4" colSpan={4}>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
+            </Row> */}
+            <div className="client-rates-table">
+              <Table className="custom-table mt-3 table-bordered" responsive hover>
+                <thead>
                   <tr>
-                    <td colSpan={9} className="text-center">
-                      <Spinner animation="border" className="mx-auto d-block" />
-                    </td>
+                    {/* <th className="text-center px-4">#</th> */}
+                    <th className="text-start px-4">Company Name</th>
+                    <th className="text-start px-4">Email</th>
+                    <th className="text-start px-4">Phone</th>
+                    <th className="text-start px-4" style={{ width: 'auto', minWidth: '250px' }}>Registered Date</th>
+                    <th className="text-start px-4" style={{ width: 'auto', minWidth: 'auto' }}>Actions</th>
                   </tr>
-                ) : (
-                  clientData && clientData.map((client, index) => (
-                    <tr key={index}>
-                      <td className="text-start px-4">{index + 1}</td>
-                      <td className="text-start px-4">{client?.companyName}</td>
-                      <td className="text-start px-4">{client?.email}</td>
-                      <td className="text-start px-4">{client?.phone}</td>
-                      <td className="text-start px-4">
-                        <Moment format="DD/MM/YYYY, hh:mm a">{client?.createdDateTime}</Moment>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={9} className="text-center">
+                        <Spinner animation="border" className="mx-auto d-block" />
                       </td>
-                      <td className="text-start px-4 cursor-pointer">
+                    </tr>
+                  ) : (
+                    clientData && clientData.map((client, index) => (
+                      <tr key={index}>
+                        {/* <td className="text-start px-4">{index + 1}</td> */}
+                        <td className="text-start px-4">{client?.companyName}</td>
+                        <td className="text-start px-4">{client?.email}</td>
+                        <td className="text-start px-4">{client?.phone}</td>
+                        <td className="text-start px-4">
+                          <Moment format="DD/MM/YYYY, hh:mm a">{client?.createdDateTime}</Moment>
+                        </td>
+                        <td className="text-center action-dropdown-menu">
+                          <div className="dropdown">
+                            <button
+                              className="btn btn-link p-0 border-0"
+                              type="button"
+
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              <BsThreeDotsVertical size={18} />
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <button
+                                  className="dropdown-item" onClick={() => navigate(`/client/edit/${client?._id}`)}
+                                >
+                                  View/Edit Details
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item" onClick={() => navigate(`/client/${client?._id}/jobs`)}
+                                >
+                                  Booking Details
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item" onClick={() => handleDelete(client?._id)}
+                                >
+                                  Delete Client
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                        {/* <td className="text-start px-4 cursor-pointer">
                         <FaEye
                           onClick={() => handleShowModal(client)}
                           size={22}
@@ -185,20 +234,36 @@ function AllClients() {
                           color="#A30D11"
                           onClick={() => handleDelete(client?._id)}
                         />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </Table>
-
-            <div className="d-flex justify-content-center">
-              <MyPagination
-                totalPages={totalPages}
-                currentPage={page}
-                onPageChange={handlePageChange}
-              />
+                      </td> */}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
             </div>
+
+            <Row className="mb-3 justify-content-between">
+              <Col md={8} className="d-flex align-items-center gap-2 ">
+                Show Entries
+                <Col md={2}>
+                  <Form.Select className="page-entries"
+                    value={limit}
+                    onChange={handleLimitChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={30}>30</option>
+                  </Form.Select>
+                </Col>
+              </Col>
+              <Col className="d-flex align-items-center justify-content-end">
+                <MyPagination
+                  totalPages={totalPages}
+                  currentPage={page}
+                  onPageChange={handlePageChange}
+                />
+              </Col>
+            </Row>
           </Container>
         </Col>
         {/* Modal for showing details */}

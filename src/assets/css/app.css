@@ -57,21 +57,21 @@
   justify-content: space-between;
 }
 
-.change-driver-modal .modal-content{
+.custom-modal .modal-content{
   background-color: var(--primary-sky);
   border-radius: 4px;
   border:none;
 }
-.change-driver-modal .modal-footer .btn{
+.custom-modal .modal-footer .btn{
   background-color: var(--primary-dark);
   border:none;
   width:100%;
   padding:10px;
 }
-.change-driver-modal .modal-header{
+.custom-modal .modal-header{
   border-bottom: none;
 }
-.change-driver-modal .custom-bootstrap-dropdown {
+.custom-modal .custom-bootstrap-dropdown {
   width: 100%!important;
   padding: 12px 16px;
   font-size: 16px;
@@ -83,7 +83,7 @@
   position: relative;
 }
 
-.change-driver-modal .custom-bootstrap-dropdown::after {
+.custom-modal .custom-bootstrap-dropdown::after {
   content: '';
   position: absolute;
   right: 16px;
@@ -96,7 +96,7 @@
   pointer-events: none;
 }
 
-.change-driver-modal .modal-footer{
+.custom-modal .modal-footer{
   border-top: none;
 }
 
@@ -136,6 +136,37 @@
   padding:10px;
   border-radius: 4px;
 }
+.custom-form .form-control{
+  padding:10px;
+  border-radius: 4px;
+}
+/* Style the outer control */
+.custom-select__control {
+  padding: 6px 10px;
+  border-radius: 4px;
+  min-height: 38px;
+  border: 1px solid #ced4da;
+  box-shadow: none;
+}
+
+/* Optional: Focus state to match Bootstrap */
+.custom-select__control--is-focused {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Style the value container (inside the box) */
+.custom-select__value-container {
+  padding: 0;
+}
+
+/* Optional: Adjust placeholder and selected value padding */
+.custom-select__single-value,
+.custom-select__placeholder {
+  padding-left: 0;
+  margin-left: 0;
+}
+
 .custom-btn{
   background-color: var(--primary-dark);
   color:#fff;
@@ -200,6 +231,7 @@
   padding:12px;
   color:#0B0B0B;
   width:33.33%;
+  min-width: 200px;
   cursor:pointer;
 }
 .client-rates-table td{
@@ -237,6 +269,24 @@ th,td{
   transform: translateY(-50%) rotate(45deg);
   pointer-events: none;
 }
+.custom-table {
+  border: 1px solid #dee2e6; 
+}
+
+.custom-table tbody tr td {
+  border:none;
+  border-bottom:1px solid #dee2e6;
+  border-right: none !important; 
+}
+
+.custom-table tbody tr:not(:first-child) {
+  border-left: none !important;
+}
+
+.custom-table td, 
+.custom-table th {
+  border: 1px solid #dee2e6;
+}
 
 .react-datepicker-wrapper input.form-control {
   appearance: textfield;
@@ -271,6 +321,60 @@ th,td{
   padding: 25px;
 }
 
+.custom-btn-primary{
+  background-color: var(--primary-dark);
+}
+.custom-btn-primary:hover{
+  background-color: var(--primary-dark);
+}
+.custom-btn-danger{
+  background-color:#ff0000;
+  color:#fff;
+}
+.custom-btn-danger:hover{
+  background-color:#ff0000;
+  color:#fff;
+}
+/* Pagination */
+.my-pagination .page-item {
+  margin: 0 5px;
+}
+
+.my-pagination .page-item .page-link {
+  padding: 8px 16px;
+  border: 1px solid #dee2e6;
+  color: #000;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.my-pagination .page-item .page-link:hover {
+  background-color: #f0f0f0;
+  color: #007bff;
+}
+
+.my-pagination .page-item.active .page-link {
+  background-color: var(--primary-dark); 
+  border-color: #000;
+  color: #fff;
+}
+/* Style the previous and next arrows */
+.my-pagination .page-item:first-child .page-link,
+.my-pagination .page-item:last-child .page-link {
+  color: var(--primary-dark); 
+}
+
+/* Optional: Add hover effect for arrows */
+.my-pagination .page-item:first-child .page-link:hover,
+.my-pagination .page-item:last-child .page-link:hover {
+  color: var(--primary-dark); 
+  background-color: #f8f9fa; 
+}
+
+.page-entries.form-select{
+  width:70px;
+}
 @media(max-width:567px){
   .search-input-width{
     width:100px!important;

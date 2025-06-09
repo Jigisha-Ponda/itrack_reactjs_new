@@ -9,6 +9,10 @@ export default function UpdateDropLocation({ isReferesh, setIsRefresh, selectedL
     const [dropLocation, setDropLocation] = useState(
         selectedLocation.customName
     );
+    const [note, setNote] = useState(
+        selectedLocation.note
+    );
+    const [isPickupAddress, setIsPickupAddress] = useState(false);
     const [location, setLocation] = useState({
         latitude: selectedLocation.latitude,
         longitude: selectedLocation.longitude,
@@ -54,7 +58,7 @@ export default function UpdateDropLocation({ isReferesh, setIsRefresh, selectedL
     }
 
     return (
-        <Container className='mt-2  mx-auto p-3 rounded-5 h-auto  ' >
+        <Container className='mx-auto rounded-5 h-auto  ' >
             <Row>
                 <Form.Group>
                     <Form.Label className='fw-bold' >Enter Custom Name</Form.Label>
@@ -72,9 +76,28 @@ export default function UpdateDropLocation({ isReferesh, setIsRefresh, selectedL
                 </Form.Group>
 
             </Row>
+            {/* <Row>
+                <Form.Group className='mt-3'>
+                    <Form.Label className='fw-bold' >Note</Form.Label>
+                    <Form.Control as="textarea" rows={4} placeholder="Enter your Note Here"
+                         onChange={(e) => setNote(e.target.value)} value={note} className="custom-form-control"
+                    />
+                </Form.Group>
+            </Row> */}
+            {/* <Row className="mt-3">
+                <Form.Group>
+                    <Form.Check
+                        type="checkbox"
+                        label="Add as Pickup Address"
+                        checked={isPickupAddress} 
+                        className="custom-checkbox"
+                        onChange={(e) => setIsPickupAddress(e.target.checked)} 
+                    />
+                </Form.Group>
+            </Row> */}
             <Row>
                 <Col className='mt-3 mb-3  mx-auto' >
-                    <Button variant="primary"
+                    <Button className="custom-btn w-100"
                         onClick={updateDropLocation}
                     >Update Location</Button>
                 </Col>

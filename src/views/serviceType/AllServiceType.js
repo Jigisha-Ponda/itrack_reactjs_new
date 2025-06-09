@@ -7,6 +7,8 @@ import { useColorModes } from '@coreui/react'
 import { get, postWihoutMediaData, updateReq, deleteReq } from '../../lib/request'
 import sweetAlert from 'sweetalert2';
 import { getFormattedDAndT } from '../../lib/getFormatedDate'
+import { CButton } from '@coreui/react'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 function AllServiceType() {
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -58,16 +60,41 @@ function AllServiceType() {
       .catch(console.error)
   }
 
-  const handleDelete = (id) => {
-    deleteReq(`/admin/service/type?ID=${id}`, "admin")
-      .then((data) => {
-        if (data.data.status) {
-          setIsRefresh(!isReferesh)
-          sweetAlert.fire({ icon: 'success', title: 'Service Type Deleted Successfully!' });
+   // Deleting the Service type
+   const handleDelete = (Id) => {
+    sweetAlert
+      .fire({
+        title: 'Are you sure you want to delete this service type?',
+        text: 'Once deleted you can’t revert this action',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Delete it!',
+        cancelButtonText: 'No, Keep it',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteReq(`/admin/service/type?ID=${id}`, "admin").then((data) => {
+            sweetAlert.fire({ icon: 'success', title: 'Service Type Deleted Successfully!' })
+            setIsRefresh(!isReferesh)
+
+          }).catch((e) => {
+            console.log("Error while deleting:", e.message)
+          })
+        } else if (result.dismiss === sweetAlert.DismissReason.cancel) {
+          sweetAlert.fire('Cancelled', 'Your Service Type is safe :)', 'error')
         }
       })
-      .catch((e) => console.error("Error while deleting:", e.message))
+
   }
+  // const handleDelete = (id) => {
+  //   deleteReq(`/admin/service/type?ID=${id}`, "admin")
+  //     .then((data) => {
+  //       if (data.data.status) {
+  //         setIsRefresh(!isReferesh)
+  //         sweetAlert.fire({ icon: 'success', title: 'Service Type Deleted Successfully!' });
+  //       }
+  //     })
+  //     .catch((e) => console.error("Error while deleting:", e.message))
+  // }
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -99,10 +126,20 @@ function AllServiceType() {
 
   return (
     <>
+     <Row className="align-items-center">
+        <Col>
+          <h4 className="mb-0">Service Type</h4>
+        </Col>
+        <Col className="text-end">
+          <CButton className="custom-btn" onClick={handleShowModal}>
+            Add Service Type
+          </CButton>
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 justify-content-between">
+          <Container className="py-3 px-2 rounded-3 client-rates-table">
+            {/* <Row className="mb-3 justify-content-between">
               <Col md={6}>
                 <InputGroup>
                   <Form.Control
@@ -118,16 +155,16 @@ function AllServiceType() {
                   <IoMdAdd /> Add Service Type
                 </Button>
               </Col>
-            </Row>
+            </Row> */}
 
-            <Table className="mt-3 table-bordered" striped responsive hover>
+            <Table className="custom-table table-bordered" responsive hover>
               <thead>
                 <tr>
-                  <th className="text-center px-4">#</th>
-                  <th className="text-center px-4">Service Type</th>
-                  <th className="text-center px-4">Date</th>
-                  <th className="text-center px-4">Status</th>
-                  <th className="text-center px-4" colSpan={2}>Action</th>
+                  <th className="text-start px-4" style={{width:'auto',minWidth:'70px'}}>#</th>
+                  <th className="text-start px-4">Service Type</th>
+                  <th className="text-start px-4">Date</th>
+                  <th className="text-start px-4" style={{width:'auto',minWidth:'150px'}}>Status</th>
+                  <th className="text-start px-4" style={{width:'auto',minWidth:'70px'}}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -158,12 +195,40 @@ function AllServiceType() {
                           {item?.status}
                         </div>
                       </td>
-                      <td className="text-start px-4 cursor-pointer">
+                      <td className="text-center action-dropdown-menu">
+                            <div className="dropdown">
+                              <button
+                                className="btn btn-link p-0 border-0"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                <BsThreeDotsVertical size={18} />
+                              </button>
+                              <ul className="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button
+                                    className="dropdown-item" onClick={() => handleShowModal2(item)}
+                                  >
+                                    Edit Details
+                                  </button>
+                                </li>
+                                <li>
+                                  <button
+                                    className="dropdown-item" onClick={() => handleDelete(item._id)}
+                                  >
+                                    Delete Service Type
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                      </td>
+                      {/* <td className="text-start px-4 cursor-pointer">
                         <FaRegEdit size={22} color="#624DE3" onClick={() => handleShowModal2(item)} />
                       </td>
                       <td className="text-start px-4 cursor-pointer">
                         <RiDeleteBin5Line size={22} color="#A30D11" onClick={() => handleDelete(item._id)} />
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 ) : (
@@ -178,7 +243,7 @@ function AllServiceType() {
         </Col>
 
         {/* Add Modal */}
-        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }}>
+        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }} className="custom-modal">
           <Modal.Header closeButton><Modal.Title>Add Service Type</Modal.Title></Modal.Header>
           <Modal.Body>
             <Form.Group>
@@ -198,9 +263,9 @@ function AllServiceType() {
         </Modal>
 
         {/* Edit Modal */}
-        <Modal show={showModal2} onHide={handleCloseModal2} style={{ marginTop: '10vh' }}>
+        <Modal show={showModal2} onHide={handleCloseModal2} style={{ marginTop: '10vh' }} dialogClassName="custom-modal">
           <Modal.Header closeButton><Modal.Title>Edit Service Type</Modal.Title></Modal.Header>
-          <Modal.Body>
+          <Modal.Body className="custom-form">
             <Form.Group>
               <Form.Label>Enter Service Type</Form.Label>
               <Form.Control
@@ -212,8 +277,8 @@ function AllServiceType() {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button style={{ backgroundColor: '#5856D5', color: '#ffffff' }} onClick={handleEditServiceType}>Update</Button>
-            <Button variant="secondary" onClick={handleCloseModal2}>Close</Button>
+            <Button onClick={handleEditServiceType}>Confirm Change</Button>
+            {/* <Button variant="secondary" onClick={handleCloseModal2}>Close</Button> */}
           </Modal.Footer>
         </Modal>
       </Row>

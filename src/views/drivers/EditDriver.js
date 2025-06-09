@@ -3,7 +3,7 @@ import { Button, Col, Container, Form, Row, Spinner, Modal, Image } from 'react-
 import { useNavigate, useParams } from 'react-router-dom'
 import { get, updateImage, updateReq } from '../../lib/request';
 import Swal from 'sweetalert2';
-
+import { CButton } from '@coreui/react';
 
 function EditDriver() {
   let imgSrc = process.env.Image_Src
@@ -20,6 +20,7 @@ function EditDriver() {
     lastname: '',
     email: '',
     phone: '',
+    companyname: '',
     username: '',
     password: '',
     imageKey: '',
@@ -79,7 +80,7 @@ function EditDriver() {
           title: data.data.message,
         });
         setLoading(false)
-      }else{
+      } else {
         setIsRefresh(!isReferesh);
         Swal.fire({
           icon: 'error',
@@ -102,15 +103,22 @@ function EditDriver() {
   }, [isReferesh])
   return (
     <>
-      <Row>
+      <Row className="align-items-center">
         <Col>
-          <h5>Edit Driver</h5>
+          <h4 className="mb-0">Edit Driver Details</h4>
+        </Col>
+        <Col className="text-end">
+          {
+            loading ? <Spinner animation="border" variant='success' /> :
+              <CButton className="custom-btn" onClick={() => handleUpdate()}>
+                Update Details
+              </CButton>
+          }
         </Col>
       </Row>
-      <Container className="shadow px-3 py-3 rounded-4 bg-white">
+      <Container className="px-3 py-3 mt-3 bg-white custom-form">
         <Row>
-
-          <Col md={6} className="mt-3">
+          <Col md={6}>
             <Form.Group>
               <Form.Label>First Name</Form.Label>
               <Form.Control type="text" placeholder="Enter First Name"
@@ -119,7 +127,7 @@ function EditDriver() {
               />
             </Form.Group>
           </Col>
-          <Col md={6} className="mt-3">
+          <Col md={6}>
             <Form.Group>
               <Form.Label>Last Name</Form.Label>
               <Form.Control type="text" placeholder="Enter Last Name"
@@ -150,7 +158,15 @@ function EditDriver() {
           </Col>
         </Row>
         <Row>
-
+          <Col md={6} className="mt-3">
+            <Form.Group>
+              <Form.Label>Company Name</Form.Label>
+              <Form.Control type="text" placeholder="Enter Company Name"
+                name='companyname' onChange={(e) => handleChange(e)}
+                value={driverData?.companyname}
+              />
+            </Form.Group>
+          </Col>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Username</Form.Label>
@@ -160,11 +176,11 @@ function EditDriver() {
               />
             </Form.Group>
           </Col>
-          <Col md={3} className="mt-3">
+          <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Password</Form.Label>
               <div>
-                <Button className="border-0" variant='primary' size="small"
+                <Button className="border-0 custom-btn" size="small"
                   onClick={handleShow}
                 >
                   Reset Password
@@ -172,7 +188,7 @@ function EditDriver() {
               </div>
             </Form.Group>
           </Col>
-          <Col md={3} className="mt-3">
+          {/* <Col md={3} className="mt-3">
             <Form.Group>
               <Form.Label>Image</Form.Label>
               <div>
@@ -183,12 +199,21 @@ function EditDriver() {
                 </Button>
               </div>
             </Form.Group>
+          </Col> */}
+          <Col md={6} className="mt-3">
+            <Form.Group>
+              <Form.Label>Company Logo</Form.Label>
+              <div>
+                <Button className="border-0 custom-btn" size="small"
+                  onClick={handleImageShow}
+                >
+                  View Logo
+                </Button>
+              </div>
+            </Form.Group>
           </Col>
         </Row>
-        <Row>
-
-        </Row>
-        <Row>
+        {/* <Row>
           <Col md={3} className="mt-3">
             {
               loading ? <Spinner animation="border" variant='success' /> :
@@ -200,7 +225,7 @@ function EditDriver() {
                 </Button>
             }
           </Col>
-        </Row>
+        </Row> */}
       </Container>
       {/* password reset modal */}
       <Modal show={show} onHide={handleClose}>

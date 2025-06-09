@@ -3,6 +3,7 @@ import { Button, Col, Container, Form, Row, Modal, Image, Spinner } from 'react-
 import { useNavigate, useParams } from 'react-router-dom'
 import { get, updateReq, updateImage } from '../../lib/request'
 import Swal from "sweetalert2"
+import { CButton } from '@coreui/react'
 
 function EditClient() {
   let imgSrc = process.env.Image_Src
@@ -111,10 +112,10 @@ function EditClient() {
   }
 
   // handle permission to assign driver
-  const handleChangePermission = (e,scope) => {
-    const payload ={
-      permission_type : scope,
-      bool_value : e.target.checked
+  const handleChangePermission = (e, scope) => {
+    const payload = {
+      permission_type: scope,
+      bool_value: e.target.checked
 
     }
     updateReq(`/admin/client/permission?ID=${id}`, payload, "admin").then((data) => {
@@ -156,9 +157,14 @@ function EditClient() {
 
   return (
     <>
-      <Row>
+      <Row className="align-items-center">
         <Col>
-          <h5>Edit Client</h5>
+          <h4 className="mb-0">Edit Client Details</h4>
+        </Col>
+        <Col className="text-end">
+          <CButton className="custom-btn" onClick={() => handleupdate(clientData?._id)}>
+            Update Details
+          </CButton>
         </Col>
       </Row>
       {
@@ -169,15 +175,15 @@ function EditClient() {
             </Spinner>
           </div>
         ) :
-          <Container className="shadow px-3 py-3 rounded-4 bg-white">
+          <Container className="shadow px-3 py-3 mt-3 bg-white custom-form">
             <Row>
-              <Col md={6} className="mt-3">
+              <Col md={6}>
                 <Form.Group>
                   <Form.Label>First Name</Form.Label>
                   <Form.Control type="text" placeholder="Enter First Name" name='firstname' onChange={(e) => handleChange(e)} value={clientData?.firstname} />
                 </Form.Group>
               </Col>
-              <Col md={6} className="mt-3">
+              <Col md={6}>
                 <Form.Group>
                   <Form.Label>Last Name</Form.Label>
                   <Form.Control type="text"
@@ -229,7 +235,7 @@ function EditClient() {
                 <Form.Group>
                   <Form.Label>Password</Form.Label>
                   <div>
-                    <Button className="border-0" variant='primary'
+                    <Button className="border-0 custom-btn"
                       onClick={handleShowPasswordModal}
                     >
                       Reset Password
@@ -241,7 +247,7 @@ function EditClient() {
                 <Form.Group >
                   <Form.Label>Company Logo</Form.Label>
                   <div>
-                    <Button className="border-0" variant='primary'
+                    <Button className="border-0 custom-btn"
                       onClick={handleShowModal}
                     >
                       View Logo
@@ -251,36 +257,36 @@ function EditClient() {
               </Col>
             </Row>
             <Row>
-              <Col md={6} className="mt-3">
+              <Col md={3} className="mt-3">
                 <Form.Group controlId="clientAssignDriverCheckbox">
                   <Form.Check
                     type="checkbox"
                     label="Client able to assign the drivers"
                     checked={clientData?.isDriverPermission ? true : false}
-                    onChange={(e) => handleChangePermission(e,"isDriverPermission")}
+                    onChange={(e) => handleChangePermission(e, "isDriverPermission")}
 
                   />
                 </Form.Group>
               </Col>
-              <Col md={6} >
-              <Form.Group controlId="clientAssignDriverCheckbox" className='mt-3' >
-                <Form.Check type="checkbox" label="Enable Tracker Feature for client"
-                  name='isDriverPermission'
-                  className='text-danger fw-bold'
-                  checked={clientData?.isTrackPermission ? true : false}
-                  onChange={(e) => handleChangePermission(e,"isTrackPermission")}
-                />
-              </Form.Group>
-            </Col>
+              <Col md={4} >
+                <Form.Group controlId="clientAssignDriverCheckbox" className='mt-3' >
+                  <Form.Check type="checkbox" label="Enable Tracker Feature for client"
+                    name='isDriverPermission'
+                    className='text-danger fw-bold'
+                    checked={clientData?.isTrackPermission ? true : false}
+                    onChange={(e) => handleChangePermission(e, "isTrackPermission")}
+                  />
+                </Form.Group>
+              </Col>
 
-              <br />
+              {/* <br />
               <Col md={3} className="mt-3">
                 <Button className="border-0" style={{ backgroundColor: '#2ECC71' }}
                   onClick={() => handleupdate(clientData?._id)}
                   size="small">
                   Update Client
                 </Button>
-              </Col>
+              </Col> */}
             </Row>
           </Container>
 

@@ -17,6 +17,8 @@ import sweetAlert from 'sweetalert2'
 import AddPickupLocation from './AddPickupLocation'
 import { getFormattedDAndT } from '../../lib/getFormatedDate'
 import UpdatePickupLocation from './UpdatePickupLocation'
+import { CButton } from '@coreui/react'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 function AllPickupLocation() {
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -44,8 +46,8 @@ function AllPickupLocation() {
   const handleDelete = (id) => {
     sweetAlert
       .fire({
-        title: 'Are you sure?',
-        text: 'You will not be able to recover this record!',
+        title: 'Are you sure you want to delete this pickup location?',
+        text: 'Once deleted you can’t revert this action',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, delete it!',
@@ -96,10 +98,20 @@ function AllPickupLocation() {
 
   return (
     <>
+      <Row className="align-items-center">
+        <Col>
+          <h4 className="mb-0">Pick Up Location</h4>
+        </Col>
+        <Col className="text-end">
+          <CButton className="custom-btn" onClick={handleAddPickUpLocation}>
+            Add Pick Up Location
+          </CButton>
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 justify-content-between">
+          <Container className="py-3 px-2 rounded-3 client-rates-table">
+            {/* <Row className="mb-3 justify-content-between">
               <Col md={6}>
                 <Form.Control
                   type="text"
@@ -113,22 +125,22 @@ function AllPickupLocation() {
                   <IoMdAdd /> Add PickUp Location
                 </Button>
               </Col>
-            </Row>
+            </Row> */}
 
-            <Modal show={isAddSection} onHide={() => setIsAddSection(false)} centered dialogClassName="custom-modal-sm">
+            <Modal show={isAddSection} onHide={() => setIsAddSection(false)} centered dialogClassName="custom-modal-sm custom-modal">
               <Modal.Header closeButton>
                 <Modal.Title>Add Pickup Location</Modal.Title>
               </Modal.Header>
-              <Modal.Body>
+              <Modal.Body className="pt-0">
                 <AddPickupLocation isReferesh={isReferesh} setIsRefresh={setIsRefresh} />
               </Modal.Body>
             </Modal>
 
-            <Modal show={isUpdateSection} onHide={() => setUpdateSection(false)} centered dialogClassName="custom-modal-sm change-driver-modal">
+            <Modal show={isUpdateSection} onHide={() => setUpdateSection(false)} centered dialogClassName="custom-modal-sm custom-modal">
               <Modal.Header closeButton>
                 <Modal.Title>Update Pickup Location</Modal.Title>
               </Modal.Header>
-              <Modal.Body>
+              <Modal.Body className="pt-0">
                 <UpdatePickupLocation
                   isReferesh={isReferesh}
                   setIsRefresh={setIsRefresh}
@@ -138,22 +150,21 @@ function AllPickupLocation() {
             </Modal>
 
             <Table
-              className="mt-4 table-bordered"
-              striped
+              className="table-bordered custom-table"
               responsive
               hover
               style={{ minWidth: 1600 }}
             >
               <thead>
                 <tr>
-                  <th className="text-center px-4">#</th>
-                  <th className="text-center px-4">Custom Name</th>
-                  <th className="text-center px-4">Map Name</th>
-                  <th className="text-center px-4">Latitude</th>
-                  <th className="text-center px-4">Longitude</th>
-                  <th className="text-center px-4">Date</th>
-                  <th className="text-center px-4">Status</th>
-                  <th className="text-center px-4" colSpan={2}>Action</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>#</th>
+                  <th className="text-start px-4">Custom Name</th>
+                  <th className="text-start px-4">Map Name</th>
+                  <th className="text-start px-4">Latitude</th>
+                  <th className="text-start px-4">Longitude</th>
+                  <th className="text-start px-4">Date</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '150px' }}>Status</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -189,12 +200,40 @@ function AllPickupLocation() {
                           {item.status}
                         </div>
                       </td>
-                      <td className="text-start px-4 cursor-pointer">
+                      <td className="text-center action-dropdown-menu">
+                        <div className="dropdown">
+                          <button
+                            className="btn btn-link p-0 border-0"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <BsThreeDotsVertical size={18} />
+                          </button>
+                          <ul className="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <button
+                                className="dropdown-item" onClick={() => handleUpdatePickUpLocation(item)}
+                              >
+                                Edit Details
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className="dropdown-item" onClick={() => handleDelete(item._id)}
+                              >
+                                Delete Pickup Location
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      {/* <td className="text-start px-4 cursor-pointer">
                         <FaRegEdit size={22} color="#624DE3" onClick={() => handleUpdatePickUpLocation(item)} />
                       </td>
                       <td className="text-start px-4 cursor-pointer">
                         <RiDeleteBin5Line size={22} color="#A30D11" onClick={() => handleDelete(item._id)} />
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 ) : (
