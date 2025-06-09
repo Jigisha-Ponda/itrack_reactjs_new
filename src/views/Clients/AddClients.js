@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Button, Col, Container, Form, Row, Spinner } from 'react-bootstrap'
 import { CButton, CCard, CCardBody, CCol, CRow } from '@coreui/react'
 import makeAnimated from 'react-select/animated';
@@ -10,6 +10,7 @@ import Select from 'react-select';
 
 function AddClients() {
   const navigate = useNavigate()
+  const formRef = useRef(); 
   const [errorMessages, setErrorMessages] = useState('')
   const [validated, setValidated] = useState(false)
   const [clientData, setClientData] = useState({
@@ -80,6 +81,7 @@ function AddClients() {
   }
 
   const handleSubmit = (event) => {
+    console.log(event);
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -140,7 +142,7 @@ function AddClients() {
         </Col>
         <Col className={activeTab === 'addClient' ? 'text-end' : ''}>
           {activeTab === 'addClient' ? (
-            <CButton className="custom-btn">
+            <CButton className="custom-btn"  onClick={() => formRef.current?.requestSubmit()}>
               Add Client
             </CButton>
           ) : (
@@ -168,7 +170,7 @@ function AddClients() {
         {/* Add Client Tab */}
         <Tab eventKey="addClient" title="Add Client">
           <Container className="shadow px-3 py-3 bg-white">
-            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+            <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
               <Row>
                 <Col md={6} className="mt-3 mt-md-0">
                   <Form.Group>
