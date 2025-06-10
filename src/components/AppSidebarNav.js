@@ -83,12 +83,24 @@ export const AppSidebarNav = ({ items }) => {
     <CSidebarNav as={SimpleBar}>
       {items &&
         items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
-      {/* <CNavItem as="div" className="mt-auto">
+      <CNavItem as="div" className="mt-auto border-top border-bottom">
         <CNavLink role="button" onClick={handleLogout}>
-          <CIcon icon={cilAccountLogout} className="me-3"/>
+          <CIcon icon={cilAccountLogout} className="me-3" />
           &nbsp; &nbsp; Logout
         </CNavLink>
-      </CNavItem> */}
+      </CNavItem>
+      <div className="nav-item">
+        <div className="d-flex flex-row align-items-center my-3">
+          <div className="profile-icon me-2">
+            <p className="mb-0">RR</p>
+          </div>
+          <div>
+            <h6 className="mb-0">Name</h6>
+            <p className="mb-0">email@gmail.com</p>
+          </div>
+        </div>
+        <small className="text-secondary">Version 1.0.1</small>
+      </div>
     </CSidebarNav>
   )
 }

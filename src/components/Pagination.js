@@ -61,7 +61,7 @@ const MyPagination = ({ totalPages, currentPage, onPageChange }) => {
   };
 
   return (
-    <Pagination className="my-pagination justify-content-center">
+    <Pagination className="w-100 my-pagination justify-content-center justify-content-lg-end">
       <Pagination.Prev onClick={() => handleClick(currentPage - 1)} disabled={currentPage === 1} />
       {renderPageNumbers()}
       <Pagination.Next onClick={() => handleClick(currentPage + 1)} disabled={currentPage === totalPages} />

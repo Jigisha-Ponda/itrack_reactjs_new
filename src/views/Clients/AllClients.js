@@ -50,9 +50,13 @@ function AllClients() {
   const handleDelete = (Id) => {
     sweetAlert
       .fire({
-        title: 'Are you sure?',
-        text: 'You want to delete this client?',
-        icon: 'warning',
+        title: 'Are you sure you want to delete this client?',
+        text: 'Once deleted you can’t revert this action',
+        imageUrl: 'src/assets/images/delete_modal_icon.png',
+        imageWidth: 60,
+        imageHeight: 60,
+        imageAlt: 'Delete Icon',
+        showCancelButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes, Delete it!',
         cancelButtonText: 'No, Keep it',
@@ -118,7 +122,7 @@ function AllClients() {
       </Row>
       <Row>
         <Col md={12}>
-          <Container className="py-3 px-2 rounded-3">
+          <div>
             {/* <Row className="mb-3 justify-content-between">
               <Col md={8} className="d-flex align-items-center gap-2 ">
                 Show
@@ -243,7 +247,7 @@ function AllClients() {
             </div>
 
             <Row className="mb-3 justify-content-between">
-              <Col md={8} className="d-flex align-items-center gap-2 ">
+              <Col md={8} className="d-flex justify-content-center justify-content-lg-start align-items-center gap-2 ">
                 Show Entries
                 <Col md={2}>
                   <Form.Select className="page-entries"
@@ -256,7 +260,7 @@ function AllClients() {
                   </Form.Select>
                 </Col>
               </Col>
-              <Col className="d-flex align-items-center justify-content-end">
+              <Col className="d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
                 <MyPagination
                   totalPages={totalPages}
                   currentPage={page}
@@ -264,7 +268,7 @@ function AllClients() {
                 />
               </Col>
             </Row>
-          </Container>
+          </div>
         </Col>
         {/* Modal for showing details */}
         <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }}>

@@ -15,14 +15,14 @@ import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 import { getJobCountByStatus } from '../../services/getTotalDocs'
-import {getTotalDocs} from '../../services/getTotalDocs'
+import { getTotalDocs } from '../../services/getTotalDocs'
 
-const WidgetsDropdown = ({data}) => {
+const WidgetsDropdown = ({ data }) => {
   const widgetChartRef1 = useRef(null)
   const widgetChartRef2 = useRef(null)
 
   return (
-    <CRow  xs={{ gutter: 4 }}>
+    <CRow xs={{ gutter: 4 }}>
       <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
           color="primary"
@@ -58,10 +58,10 @@ const WidgetsDropdown = ({data}) => {
 
           chart={
             <CChartLine
-            ref={widgetChartRef1}
-            className="mt-3 mx-3"
-            style={{ height: '40px' }}
-          />
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '40px' }}
+            />
           }
         />
       </CCol>
@@ -80,10 +80,10 @@ const WidgetsDropdown = ({data}) => {
 
           chart={
             <CChartLine
-            ref={widgetChartRef1}
-            className="mt-3 mx-3"
-            style={{ height: '40px' }}
-          />
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '40px' }}
+            />
           }
         />
       </CCol>
@@ -102,10 +102,10 @@ const WidgetsDropdown = ({data}) => {
 
           chart={
             <CChartLine
-            ref={widgetChartRef1}
-            className="mt-3 mx-3"
-            style={{ height: '40px' }}
-          />
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '40px' }}
+            />
           }
         />
       </CCol>
@@ -124,14 +124,14 @@ const WidgetsDropdown = ({data}) => {
 
           chart={
             <CChartLine
-            ref={widgetChartRef1}
-            className="mt-3 mx-3"
-            style={{ height: '40px' }}
-          />
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '40px' }}
+            />
           }
         />
       </CCol>
-    
+
       <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
           color="primary"
@@ -147,10 +147,10 @@ const WidgetsDropdown = ({data}) => {
 
           chart={
             <CChartLine
-            ref={widgetChartRef1}
-            className="mt-3 mx-3"
-            style={{ height: '40px' }}
-          />
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '40px' }}
+            />
           }
         />
       </CCol>
@@ -169,10 +169,10 @@ const WidgetsDropdown = ({data}) => {
 
           chart={
             <CChartLine
-            ref={widgetChartRef1}
-            className="mt-3 mx-3"
-            style={{ height: '40px' }}
-          />
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '40px' }}
+            />
           }
         />
       </CCol>
@@ -191,10 +191,10 @@ const WidgetsDropdown = ({data}) => {
 
           chart={
             <CChartLine
-            ref={widgetChartRef1}
-            className="mt-3 mx-3"
-            style={{ height: '40px' }}
-          />
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '40px' }}
+            />
           }
         />
       </CCol>

@@ -10,7 +10,7 @@ import Select from 'react-select';
 
 function AddClients() {
   const navigate = useNavigate()
-  const formRef = useRef(); 
+  const formRef = useRef();
   const [errorMessages, setErrorMessages] = useState('')
   const [validated, setValidated] = useState(false)
   const [clientData, setClientData] = useState({
@@ -155,8 +155,7 @@ function AddClients() {
             //   <option value="HH22">HH22</option>
             // </Form.Select>
             <Select
-              className="w-100 custom-select"
-              classNamePrefix="custom-select"
+              className="w-75 ms-auto"
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti

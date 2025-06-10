@@ -83,26 +83,26 @@ function AllClientsJob() {
     // setSearchQuery({ ...searchQuery, selectedColumn: option.value })
   }
 
-const customOption = (props) => {
-  const { isSelected, label } = props;
-  return (
-    <components.Option {...props}>
-      <div className="d-flex justify-content-between align-items-center">
-        <span>{label}</span>
-        {isSelected && <FaCheck className="text-primary" />}
-      </div>
-    </components.Option>
-  );
-};
+  const customOption = (props) => {
+    const { isSelected, label } = props;
+    return (
+      <components.Option {...props}>
+        <div className="d-flex justify-content-between align-items-center">
+          <span>{label}</span>
+          {isSelected && <FaCheck className="text-primary" />}
+        </div>
+      </components.Option>
+    );
+  };
   return (
     <>
       <Row className="align-items-center">
         <Col>
           <h4 className="mb-0">Booking Details</h4>
         </Col>
-        <Col>
+        <Col lg={6} className="mt-3 mt-lg-0">
           <Select
-            className="ms-auto w-50 custom-select"
+            className="ms-lg-auto custom-select"
             classNamePrefix="custom-select"
             isMulti
             options={columnOptions}
@@ -117,7 +117,7 @@ const customOption = (props) => {
       </Row>
       <Row>
         <Col md={12}>
-          <Container className="py-3 px-2 rounded-3">
+          <div className="mt-3">
             {/* <Row className="mb-3 d-flex justify-content-between ">
               <Col md={12} className="d-flex align-items-center justify-content-between gap-2 ">
                 <div className="d-flex align-items-center gap-2">
@@ -142,10 +142,10 @@ const customOption = (props) => {
               </Col>
             </Row> */}
             <div className="client-rates-table">
-            <Table bordered responsive hover className="custom-table">
+              <Table bordered responsive hover className="custom-table">
                 <thead>
                   <tr>
-                    <th className="text-center">#</th>
+                    <th className="text-center" style={{ width: 'auto', minWidth: '70px' }}>#</th>
                     <th className="text-center">Job Id</th>
                     <th className="text-center">Service Code</th>
                     <th className="text-center">Client Name</th>
@@ -154,8 +154,8 @@ const customOption = (props) => {
                     <th className="text-center">Deliver To</th>
                     <th className="text-center">Ready Time</th>
                     <th className="text-center">Cutoff Time</th>
-                    <th className="text-center" style={{width:'auto',minWidth:'170px'}}>Status</th>
-                    <th className="text-center" colSpan={4}>
+                    <th className="text-center" style={{ width: 'auto', minWidth: '170px' }}>Status</th>
+                    <th className="text-center" style={{ width: 'auto', minWidth: '70px' }}>
                       Actions
                     </th>
                   </tr>
@@ -252,19 +252,6 @@ const customOption = (props) => {
               </Table>
             </div>
 
-            {/* <div className="d-flex justify-content-center">
-              <Pagination className="my-pagination">
-                <Pagination.First />
-                <Pagination.Prev />
-                <Pagination.Item>{1}</Pagination.Item>
-                <Pagination.Item>{2}</Pagination.Item>
-                <Pagination.Item>{3}</Pagination.Item>
-                <Pagination.Ellipsis />
-                <Pagination.Item>{10}</Pagination.Item>
-                <Pagination.Next />
-                <Pagination.Last />
-              </Pagination>
-            </div> */}
             <Row className="mb-3 justify-content-between">
               <Col md={6} className="d-flex align-items-center gap-2">
                 Show Entries
@@ -274,7 +261,7 @@ const customOption = (props) => {
                   <option>30</option>
                 </Form.Select>
               </Col>
-              <Col md={6} className="d-flex align-items-center justify-content-end">
+              <Col md={6} className="d-flex align-items-center justify-content-end max-w-100 overflow-auto mt-3 mt-lg-0">
                 <Pagination className="my-pagination">
                   <Pagination.First />
                   <Pagination.Prev />
@@ -288,7 +275,7 @@ const customOption = (props) => {
                 </Pagination>
               </Col>
             </Row>
-          </Container>
+          </div>
         </Col>
         {/* Modal for showing details */}
         <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }}>

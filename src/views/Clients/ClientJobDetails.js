@@ -254,7 +254,7 @@ export default function ClientJobDetails() {
             <Col md={4}>
               <h4 className="mb-0">{tabLabels[activeTab]}</h4>
             </Col>
-            <Col md={8} className="d-flex align-item-center justify-content-end gap-2 py-3">
+            <Col md={8} className="d-flex flex-wrap align-item-center justify-content-start justify-content-lg-end gap-2 py-3">
               <EditJobAdmin job={job} setIsRefresh={setIsRefresh} isReferesh={isRefresh} />
               <Button className="custom-border-btn" onClick={() => handleShow()}>
                 {' '}
@@ -267,7 +267,7 @@ export default function ClientJobDetails() {
                 {' '}
                 Add Vpap
               </Button> : null}
-              <Button className="custom-border-btn" 
+              <Button className="custom-border-btn"
                 onClick={() => navigate(`/location/${id}`)}
               >
                 {' '}
@@ -565,13 +565,13 @@ export default function ClientJobDetails() {
             {/* Driver Attachments */}
             <Tab eventKey="driverAttachments" title="Driver Attachments">
               <>
-              <div className="custom-list-main d-flex flex-row align-items-center justify-content-center">
-                <ViewDriverUploads
+                <div className="custom-list-main d-flex flex-row align-items-center justify-content-center">
+                  <ViewDriverUploads
                     captures={job?.capturedPic}
                     Rname={job?.signature_name}
                     RSign={job?.deliveredVerificationImage}
                   />
-              </div>
+                </div>
               </>
             </Tab>
 

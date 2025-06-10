@@ -47,9 +47,13 @@ function AllDropLocation() {
   const handleDelete = (id) => {
     sweetAlert
       .fire({
-        title: 'Are you sure?',
-        text: 'You will not be able to recover this record!',
-        icon: 'warning',
+        title: 'Are you sure you want to delete this drop location?',
+        text: 'Once deleted you can’t revert this action',
+        imageUrl: 'src/assets/images/delete_modal_icon.png',
+        imageWidth: 60,
+        imageHeight: 60,
+        imageAlt: 'Delete Icon',
+        showCancelButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'No, keep it',
@@ -88,7 +92,7 @@ function AllDropLocation() {
 
   return (
     <>
-    <Row className="align-items-center">
+      <Row className="align-items-center">
         <Col>
           <h4 className="mb-0">Service Code</h4>
         </Col>

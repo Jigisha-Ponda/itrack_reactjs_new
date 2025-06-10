@@ -79,9 +79,9 @@ const AllDriverJobs = () => {
         <Col>
           <h4 className="mb-0">Booking Details</h4>
         </Col>
-        <Col>
+        <Col lg={6} className="mt-3 mt-lg-0">
           <Select
-            className="ms-auto w-50 custom-select"
+            className="ms-lg-auto custom-select"
             classNamePrefix="custom-select"
             isMulti
             options={columnOptions}
@@ -96,7 +96,7 @@ const AllDriverJobs = () => {
       </Row>
       <Row>
         {/* <Col md={12}> */}
-        <Container className="py-3 px-2 client-rates-table">
+        <div className="client-rates-table">
           {/* <Row className="mb-3 d-flex justify-content-between ">
           <Col md={2} className="d-flex align-items-center justify-content-between gap-2 ">
             <div className="d-flex align-items-center gap-2">
@@ -119,7 +119,7 @@ const AllDriverJobs = () => {
           </Col>
         </Row> */}
 
-          <Table className="mt-3" custom-table responsive hover style={{ minWidth: 2000 }}>
+          <Table className="mt-3 custom-table" responsive hover style={{ minWidth: 2000 }}>
             <thead>
               <tr>
                 <th className="text-center">#</th>
@@ -209,8 +209,8 @@ const AllDriverJobs = () => {
                 <option>30</option>
               </Form.Select>
             </Col>
-            <Col md={6} className="d-flex align-items-center justify-content-end">
-              <Pagination className="mt-3 my-pagination">
+            <Col md={6} className="d-flex align-items-center justify-content-end mt-3 mt-lg-0">
+              <Pagination className="my-pagination">
                 <Pagination.Prev />
                 <Pagination.Item>{1}</Pagination.Item>
                 <Pagination.Item>{2}</Pagination.Item>
@@ -232,7 +232,7 @@ const AllDriverJobs = () => {
             <Pagination.Next />
           </Pagination>
         </div> */}
-        </Container>
+        </div>
         {/* </Col> */}
       </Row>
     </>

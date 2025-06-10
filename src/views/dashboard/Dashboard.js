@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { legacy_createStore as createStore } from 'redux'
 import { CButton, CCard, CCardBody, CCol, CRow } from '@coreui/react'
 import { FaExchangeAlt, FaEye, FaTruckMoving, FaMapMarkedAlt, FaSyncAlt, FaFilter } from 'react-icons/fa'
-import { Button, Col, Row, Spinner, Table, Tab, Tabs, Container, Form } from 'react-bootstrap'
+import { Button, Col, Row, Spinner, Table, Tab, Tabs, Form } from 'react-bootstrap'
 import { useNavigate, useLocation } from 'react-router-dom'
 import SearchBar from '../../components/SearchBar'
 import EditJobAdmin from '../../components/Modals/EditJobAdmin'
@@ -246,28 +246,28 @@ const Dashboard = () => {
     }
   }, [])
 
-    // // Pagination
-    // const handlePageChange = (page) => {
-    //   setPage(page);
-    // };
-    // // Limit
-    // const handleLimitChange = (e) => {
-    //   setLimit(e.target.value)
-    //   setTotalPages(Math.ceil(totalDocs / e.target.value))
-    // }
-  
-    // useEffect(() => {
-    //   setLoading(true);
-    //   get(`/admin/info/jobFilter?page=${page}&limit=${limit}`, "admin").then((data) => {
-    //     setData(response?.data?.data)
-    //     setLoading(false)
-    //   }).catch((e) => {
-    //     console.log("errr", e.message);
-    //   })
-    //   // Getting total pages
-  
-    // }, [isReferesh, page, limit])
-  
+  // // Pagination
+  // const handlePageChange = (page) => {
+  //   setPage(page);
+  // };
+  // // Limit
+  // const handleLimitChange = (e) => {
+  //   setLimit(e.target.value)
+  //   setTotalPages(Math.ceil(totalDocs / e.target.value))
+  // }
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   get(`/admin/info/jobFilter?page=${page}&limit=${limit}`, "admin").then((data) => {
+  //     setData(response?.data?.data)
+  //     setLoading(false)
+  //   }).catch((e) => {
+  //     console.log("errr", e.message);
+  //   })
+  //   // Getting total pages
+
+  // }, [isReferesh, page, limit])
+
 
   return (
     <>
@@ -324,7 +324,7 @@ const Dashboard = () => {
           <div className="table-responsive">
             <Table responsive hover bordered>
               <thead>
-                <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                <tr style={{ fontSize: 14, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
                   <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
                     Client
                   </th>
@@ -356,16 +356,16 @@ const Dashboard = () => {
                     <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
                     Job ID
                   </th> */}
-                  <th className="text-center" onClick={() => handleSort('note')} > 
-                    Note
+                  <th className="text-center" onClick={() => handleSort('note')} >
+                    Notes
                   </th>
                   <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
                     Driver
                   </th>
-                  <th className="text-center" onClick={() => handleSort('currentStatus')}>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '170px' }} onClick={() => handleSort('currentStatus')}>
                     Status
                   </th>
-                  <th className="text-center" colSpan={2}>Actions</th>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '70px' }}>Actions</th>
                 </tr>
               </thead>
 
@@ -386,7 +386,7 @@ const Dashboard = () => {
 
                     const tdStyle = {
                       backgroundColor: isSelected ? '#E0E0E0' : 'transparent',
-                      fontSize: 13,
+                      fontSize: 14,
                       textAlign: 'left',
                     };
 
@@ -546,15 +546,15 @@ const Dashboard = () => {
                     Job ID
                   </th> */}
                   <th className="text-center" onClick={() => handleSort('note')}>
-                    Note
+                    Notes
                   </th>
                   <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
                     Driver
                   </th>
-                  <th className="text-center" onClick={() => handleSort('currentStatus')} style={{width:'auto',minWidth:'170px'}}>
+                  <th className="text-center" onClick={() => handleSort('currentStatus')} style={{ width: 'auto', minWidth: '170px' }}>
                     Status
                   </th>
-                  <th className="text-center" colSpan={2}>Actions</th>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '70px' }}>Actions</th>
                 </tr>
               </thead>
 

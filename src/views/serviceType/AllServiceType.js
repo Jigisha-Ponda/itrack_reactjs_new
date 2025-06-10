@@ -29,6 +29,7 @@ function AllServiceType() {
     setServiceType(serviceType.text)
     setShowModal2(true)
   }
+
   const handleCloseModal = () => setShowModal(false)
   const handleCloseModal2 = () => setShowModal2(false)
 
@@ -60,13 +61,16 @@ function AllServiceType() {
       .catch(console.error)
   }
 
-   // Deleting the Service type
-   const handleDelete = (Id) => {
+  // Deleting the Service type
+  const handleDelete = (Id) => {
     sweetAlert
       .fire({
         title: 'Are you sure you want to delete this service type?',
         text: 'Once deleted you can’t revert this action',
-        icon: 'warning',
+        imageUrl: 'src/assets/images/delete_modal_icon.png',
+        imageWidth: 60,
+        imageHeight: 60,
+        imageAlt: 'Delete Icon',
         showCancelButton: true,
         confirmButtonText: 'Yes, Delete it!',
         cancelButtonText: 'No, Keep it',
@@ -126,7 +130,7 @@ function AllServiceType() {
 
   return (
     <>
-     <Row className="align-items-center">
+      <Row className="align-items-center">
         <Col>
           <h4 className="mb-0">Service Type</h4>
         </Col>
@@ -138,7 +142,7 @@ function AllServiceType() {
       </Row>
       <Row>
         <Col md={12}>
-          <Container className="py-3 px-2 rounded-3 client-rates-table">
+          <div className="mt-3 client-rates-table">
             {/* <Row className="mb-3 justify-content-between">
               <Col md={6}>
                 <InputGroup>
@@ -160,11 +164,11 @@ function AllServiceType() {
             <Table className="custom-table table-bordered" responsive hover>
               <thead>
                 <tr>
-                  <th className="text-start px-4" style={{width:'auto',minWidth:'70px'}}>#</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '50px' }}>#</th>
                   <th className="text-start px-4">Service Type</th>
                   <th className="text-start px-4">Date</th>
-                  <th className="text-start px-4" style={{width:'auto',minWidth:'150px'}}>Status</th>
-                  <th className="text-start px-4" style={{width:'auto',minWidth:'70px'}}>Actions</th>
+                  <th className="text-center px-4" style={{ width: 'auto', minWidth: '70px' }}>Status</th>
+                  <th className="text-center px-4" style={{ width: 'auto', minWidth: '70px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -182,7 +186,7 @@ function AllServiceType() {
                       <td className="text-start px-4">
                         {item?.createdDateTime ? getFormattedDAndT(item.createdDateTime) : ''}
                       </td>
-                      <td className="text-start px-4">
+                      <td className="text-center px-4">
                         <div
                           className="rounded-5"
                           style={{
@@ -196,32 +200,32 @@ function AllServiceType() {
                         </div>
                       </td>
                       <td className="text-center action-dropdown-menu">
-                            <div className="dropdown">
+                        <div className="dropdown">
+                          <button
+                            className="btn btn-link p-0 border-0"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <BsThreeDotsVertical size={18} />
+                          </button>
+                          <ul className="dropdown-menu dropdown-menu-end">
+                            <li>
                               <button
-                                className="btn btn-link p-0 border-0"
-                                type="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
+                                className="dropdown-item" onClick={() => handleShowModal2(item)}
                               >
-                                <BsThreeDotsVertical size={18} />
+                                Edit Details
                               </button>
-                              <ul className="dropdown-menu dropdown-menu-end">
-                                <li>
-                                  <button
-                                    className="dropdown-item" onClick={() => handleShowModal2(item)}
-                                  >
-                                    Edit Details
-                                  </button>
-                                </li>
-                                <li>
-                                  <button
-                                    className="dropdown-item" onClick={() => handleDelete(item._id)}
-                                  >
-                                    Delete Service Type
-                                  </button>
-                                </li>
-                              </ul>
-                            </div>
+                            </li>
+                            <li>
+                              <button
+                                className="dropdown-item" onClick={() => handleDelete(item._id)}
+                              >
+                                Delete Service Type
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
                       </td>
                       {/* <td className="text-start px-4 cursor-pointer">
                         <FaRegEdit size={22} color="#624DE3" onClick={() => handleShowModal2(item)} />
@@ -239,13 +243,13 @@ function AllServiceType() {
               </tbody>
             </Table>
 
-          </Container>
+          </div>
         </Col>
 
         {/* Add Modal */}
         <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }} className="custom-modal">
           <Modal.Header closeButton><Modal.Title>Add Service Type</Modal.Title></Modal.Header>
-          <Modal.Body>
+          <Modal.Body className="pt-0">
             <Form.Group>
               <Form.Label>Enter Service Type</Form.Label>
               <Form.Control
@@ -257,15 +261,15 @@ function AllServiceType() {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button style={{ backgroundColor: '#5856D5', color: '#ffffff' }} onClick={handleAddServiceType}>Add</Button>
-            <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
+            <Button className="custom-btn" onClick={handleAddServiceType}>Add</Button>
+            {/* <Button variant="secondary" onClick={handleCloseModal}>Close</Button> */}
           </Modal.Footer>
         </Modal>
 
         {/* Edit Modal */}
         <Modal show={showModal2} onHide={handleCloseModal2} style={{ marginTop: '10vh' }} dialogClassName="custom-modal">
           <Modal.Header closeButton><Modal.Title>Edit Service Type</Modal.Title></Modal.Header>
-          <Modal.Body className="custom-form">
+          <Modal.Body className="custom-form pt-0">
             <Form.Group>
               <Form.Label>Enter Service Type</Form.Label>
               <Form.Control

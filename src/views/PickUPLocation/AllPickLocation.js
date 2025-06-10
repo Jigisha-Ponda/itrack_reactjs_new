@@ -48,7 +48,11 @@ function AllPickupLocation() {
       .fire({
         title: 'Are you sure you want to delete this pickup location?',
         text: 'Once deleted you can’t revert this action',
-        icon: 'warning',
+        imageUrl: 'src/assets/images/delete_modal_icon.png',
+        imageWidth: 60,
+        imageHeight: 60,
+        imageAlt: 'Delete Icon',
+        showCancelButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'No, keep it',
@@ -110,7 +114,7 @@ function AllPickupLocation() {
       </Row>
       <Row>
         <Col md={12}>
-          <Container className="py-3 px-2 rounded-3 client-rates-table">
+          <div className="mt-3 client-rates-table">
             {/* <Row className="mb-3 justify-content-between">
               <Col md={6}>
                 <Form.Control
@@ -246,7 +250,7 @@ function AllPickupLocation() {
               </tbody>
             </Table>
 
-          </Container>
+          </div>
         </Col>
       </Row>
     </>

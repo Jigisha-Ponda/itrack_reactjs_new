@@ -43,9 +43,13 @@ const AllDrivers = () => {
   const handleDelete = (Id) => {
     sweetAlert
       .fire({
-        title: 'Are you sure?',
-        text: 'You want to delete this driver?',
-        icon: 'warning',
+        title: 'Are you sure you want to delete this driver?',
+        text: 'Once deleted you can’t revert this action',
+        imageUrl: 'src/assets/images/delete_modal_icon.png',
+        imageWidth: 60,
+        imageHeight: 60,
+        imageAlt: 'Delete Icon',
+        showCancelButton: true,
         showCancelButton: true,
         confirmButtonText: 'Yes, Delete it!',
         cancelButtonText: 'No, Keep it',
@@ -113,7 +117,7 @@ const AllDrivers = () => {
       </Row>
       <Row>
         <Col md={12}>
-          <Container className="py-3 px-2 rounded-3 client-rates-table">
+          <div className="mt-3 client-rates-table">
             {/* <Row className="mb-3 justify-content-between">
               <Col md={8} className="d-flex align-items-center gap-2 ">
                 Show
@@ -139,11 +143,11 @@ const AllDrivers = () => {
               <thead>
                 <tr>
                   {/* <th className="text-center px-4">#</th> */}
-                  <th className="text-start px-4" style={{width:'auto',minWidth:'300px'}}>Full Name</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '300px' }}>Full Name</th>
                   <th className="text-start px-4">Email</th>
                   <th className="text-start px-4">Phone</th>
-                  <th className="text-start px-4" style={{width:'auto',minWidth:'250px'}}>Registered Date</th>
-                  <th className="text-start px-4" style={{width:'auto',minWidth:'auto'}}>Actions</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '250px' }}>Registered Date</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: 'auto' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,41 +168,41 @@ const AllDrivers = () => {
                       <Moment format="DD/MM/YYYY, hh:mm a">{item.createdDateTime}</Moment>
                     </td>
                     <td className="text-center action-dropdown-menu">
-                          <div className="dropdown">
-                            <button
-                              className="btn btn-link p-0 border-0"
-                              type="button"
+                      <div className="dropdown">
+                        <button
+                          className="btn btn-link p-0 border-0"
+                          type="button"
 
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <BsThreeDotsVertical size={18} />
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-end">
+                          <li>
+                            <button
+                              className="dropdown-item" onClick={() => navigate(`/driver/edit/${item._id}`)}
                             >
-                              <BsThreeDotsVertical size={18} />
+                              View/Edit Details
                             </button>
-                            <ul className="dropdown-menu dropdown-menu-end">
-                              <li>
-                                <button
-                                  className="dropdown-item" onClick={() => navigate(`/driver/edit/${item._id}`)}
-                                >
-                                  View/Edit Details
-                                </button>
-                              </li>
-                              <li>
-                                <button
-                                  className="dropdown-item" onClick={() => navigate(`/driver/jobs/${item._id}`)}
-                                >
-                                  Booking Details
-                                </button>
-                              </li>
-                              <li>
-                                <button
-                                  className="dropdown-item" onClick={() => handleDelete(item._id)}
-                                >
-                                  Delete Driver
-                                </button>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item" onClick={() => navigate(`/driver/jobs/${item._id}`)}
+                            >
+                              Booking Details
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              className="dropdown-item" onClick={() => handleDelete(item._id)}
+                            >
+                              Delete Driver
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
                     {/* <td className="text-start px-4">
                       <FaRegEdit
                         size={22}
@@ -247,7 +251,7 @@ const AllDrivers = () => {
                   </Form.Select>
                 </Col>
               </Col>
-              <Col className="d-flex align-items-center justify-content-end">
+              <Col className="d-flex align-items-center justify-content-end mt-3 mt-lg-0">
                 <MyPagination
                   totalPages={totalPages}
                   currentPage={page}
@@ -255,7 +259,7 @@ const AllDrivers = () => {
                 />
               </Col>
             </Row>
-          </Container>
+          </div>
         </Col>
       </Row>
       <Modal show={show} onHide={handleClose}>

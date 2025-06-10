@@ -290,7 +290,7 @@ const AllJobs = () => {
       </Row>
       <Row>
         <Col md={12}>
-          <Container className="py-3 px-2 rounded-3 client-rates-table">
+          <div className="client-rates-table">
             {/* <Row className="mb-3 justify-content-between">
               <Col className="d-flex align-items-center gap-3">
                 Show:
@@ -375,10 +375,10 @@ const AllJobs = () => {
                   <th className="text-start" onClick={() => handleSort('driverId.firstname')}>
                     Driver
                   </th>
-                  <th className="text-start" style={{ width: 'auto', minWidth: '100px' }} onClick={() => handleSort('notes')}>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '100px' }} onClick={() => handleSort('notes')}>
                     Notes
                   </th>
-                  <th className="text-start" style={{ width: 'auto', minWidth: '120px' }} onClick={() => handleSort('currentStatus')}>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '120px' }} onClick={() => handleSort('currentStatus')}>
                     Status
                   </th>
                   <th className="text-center" style={{ width: 'auto', minWidth: '120px' }} colSpan={4}>
@@ -541,7 +541,7 @@ const AllJobs = () => {
                 )}
               </tbody>
             </Table>
-          </Container>
+          </div>
         </Col>
       </Row>
 
@@ -559,7 +559,7 @@ const AllJobs = () => {
             </Form.Select>
           </Col>
         </Col>
-        <Col md={6} className="d-flex align-items-center justify-content-end">
+        <Col md={6} className="d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
           <MyPagination
             totalPages={totalPages}
             currentPage={page}

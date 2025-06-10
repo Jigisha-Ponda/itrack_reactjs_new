@@ -504,7 +504,7 @@ function AddJobs() {
               ) : null}
             </Form.Group>
           </Col>
-          <Col md={6}>
+          <Col md={6} className="mt-3 mt-lg-0">
             <Form.Group>
               <Form.Label>Customer Reference No</Form.Label>
               <Form.Control

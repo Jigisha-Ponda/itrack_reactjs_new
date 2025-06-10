@@ -58,7 +58,7 @@ export default function UpdatePickupLocation({ isReferesh, setIsRefresh, selecte
     }
 
     return (
-        <Container className='rounded-5 h-auto p-0' >
+        <div className='rounded-5 h-auto p-0' >
             <Row>
                 <Form.Group>
                     <Form.Label className='fw-bold'>Enter Custom Name</Form.Label>
@@ -77,7 +77,7 @@ export default function UpdatePickupLocation({ isReferesh, setIsRefresh, selecte
                 <Form.Group className='mt-3'>
                     <Form.Label className='fw-bold' >Note</Form.Label>
                     <Form.Control as="textarea" rows={4} placeholder="Enter your Note Here"
-                         onChange={(e) => setNote(e.target.value)} value={note} className="custom-form-control"
+                        onChange={(e) => setNote(e.target.value)} value={note} className="custom-form-control"
                     />
                 </Form.Group>
             </Row>
@@ -86,9 +86,9 @@ export default function UpdatePickupLocation({ isReferesh, setIsRefresh, selecte
                     <Form.Check
                         type="checkbox"
                         label="Add as Delivery Address"
-                        checked={isDeliveryAddress} 
+                        checked={isDeliveryAddress}
                         className="custom-checkbox"
-                        onChange={(e) => setIsDeliveryAddress(e.target.checked)} 
+                        onChange={(e) => setIsDeliveryAddress(e.target.checked)}
                     />
                 </Form.Group>
             </Row>
@@ -104,6 +104,6 @@ export default function UpdatePickupLocation({ isReferesh, setIsRefresh, selecte
                     onClick={addPickUpLocation}
                 >Update Location</Button>
             </Row> */}
-        </Container>
+        </div>
     )
 }

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-import { Button, Container, Form, Row,Col } from 'react-bootstrap'
+import { Button, Container, Form, Row, Col } from 'react-bootstrap'
 import LocationSuggestion from '../../components/Maps/LocationSuggestion'
 import { postWihoutMediaData, updateReq } from '../../lib/request';
 import sweetAlert from 'sweetalert2';
@@ -58,7 +58,7 @@ export default function UpdateDropLocation({ isReferesh, setIsRefresh, selectedL
     }
 
     return (
-        <Container className='mx-auto rounded-5 h-auto  ' >
+        <div className='mx-auto rounded-5 h-auto' >
             <Row>
                 <Form.Group>
                     <Form.Label className='fw-bold' >Enter Custom Name</Form.Label>
@@ -107,6 +107,6 @@ export default function UpdateDropLocation({ isReferesh, setIsRefresh, selectedL
                     onClick={updateDropLocation}
                 >Update Location</Button>
             </Row> */}
-        </Container>
+        </div>
     )
 }

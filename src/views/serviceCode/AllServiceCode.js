@@ -77,24 +77,19 @@ function AllServiceCode() {
       })
       .catch(console.error)
   }
-   // Deleting the service code
-   const handleDelete = (Id) => {
+  // Deleting the service code
+  const handleDelete = (Id) => {
     sweetAlert
       .fire({
         title: 'Are you sure you want to delete this service code?',
         text: 'Once deleted you can’t revert this action',
-        imageUrl: '/images/delete-modal-icon.png',
+        imageUrl: 'src/assets/images/delete_modal_icon.png',
         imageWidth: 60,
         imageHeight: 60,
         imageAlt: 'Delete Icon',
         showCancelButton: true,
         confirmButtonText: 'Yes, Delete it!',
         cancelButtonText: 'No, Keep it',
-        customClass: {
-          confirmButton: 'btn btn-danger custom-btn-danger mx-2',
-          cancelButton: 'btn btn-primary custom-btn-primary'
-        },
-        buttonsStyling: false
       }).then((result) => {
         if (result.isConfirmed) {
           deleteReq(`/admin/service/code?ID=${id}`, 'admin').then((data) => {
@@ -151,7 +146,7 @@ function AllServiceCode() {
       </Row>
       <Row>
         <Col md={12}>
-          <Container className="py-3 px-2 rounded-3 client-rates-table">
+          <div className="mt-3 client-rates-table">
             {/* <Row className="mb-3 justify-content-between">
               <Col md={6}>
                 <Form.Control
@@ -171,11 +166,11 @@ function AllServiceCode() {
             <Table className="custom-table table-bordered" responsive hover>
               <thead>
                 <tr>
-                  <th className="text-center px-4" style={{ width: 'auto', minWidth: '70px' }}>#</th>
-                  <th className="text-center px-4">Service Code</th>
-                  <th className="text-center px-4">Date</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>#</th>
+                  <th className="text-start px-4">Service Code</th>
+                  <th className="text-start px-4">Date</th>
                   <th className="text-start px-4" style={{ width: 'auto', minWidth: '150px' }}>Status</th>
-                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>Actions</th>
+                  <th className="text-center px-4" style={{ width: 'auto', minWidth: '70px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -248,15 +243,15 @@ function AllServiceCode() {
               </tbody>
             </Table>
 
-          </Container>
+          </div>
         </Col>
 
         {/* Add Modal */}
-        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }}>
+        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }} dialogClassName="custom-modal">
           <Modal.Header closeButton>
             <Modal.Title>Add Service Code</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
+          <Modal.Body className="pt-0">
             <Col md={12}>
               <Form.Group>
                 <Form.Label>Enter Service Code</Form.Label>
@@ -270,12 +265,12 @@ function AllServiceCode() {
             </Col>
           </Modal.Body>
           <Modal.Footer className="border-0">
-            <Button style={{ backgroundColor: '#5856D5', color: '#ffffff' }} onClick={handleAddServiceCode}>
+            <Button className="custom-btn" onClick={handleAddServiceCode}>
               Add Service Code
             </Button>
-            <Button variant="secondary" onClick={handleCloseModal}>
+            {/* <Button variant="secondary" onClick={handleCloseModal}>
               Close
-            </Button>
+            </Button> */}
           </Modal.Footer>
         </Modal>
 
@@ -284,7 +279,7 @@ function AllServiceCode() {
           <Modal.Header closeButton>
             <Modal.Title>Edit Service Code</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
+          <Modal.Body className="pt-0">
             <Col md={12}>
               <Form.Group>
                 <Form.Label>Enter Service Code</Form.Label>

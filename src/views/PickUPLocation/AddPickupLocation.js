@@ -59,7 +59,7 @@ export default function AddPickupLocation({ isReferesh, setIsRefresh }) {
     }
 
     return (
-        <Container className='rounded-5 h-auto'>
+        <div className='rounded-5 h-auto'>
             <Row>
                 <Form.Group>
                     <Form.Label className='fw-bold' >Enter Custom Name</Form.Label>
@@ -85,6 +85,6 @@ export default function AddPickupLocation({ isReferesh, setIsRefresh }) {
                     >Add Location</Button>
                 </Col>
             </Row>
-        </Container>
+        </div>
     )
 }
