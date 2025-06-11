@@ -20,6 +20,9 @@ import { LuChevronDown } from 'react-icons/lu'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import FilterOffCanvas from '../../components/Filter'
 import MyPagination from '../../components/Pagination'
+import FilterTags from '../../components/FilterTags'
+import { getSeachFilterResult } from '../../services/getSearchFilterResult'
+
 
 const Dashboard = () => {
   const currentDate = getCurrentDate()
@@ -43,7 +46,30 @@ const Dashboard = () => {
   const [validated, setValidated] = useState(false)
   const [activeTab, setActiveTab] = useState("todaysJob");
   const [totalPages, setTotalPages] = useState(1);
+  const [showFilter, setShowFilter] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
+  const handleApplyFilter = () => {
+    // Filter logic here
+    setShowFilter(false);
+  };
+
+  const handleRemoveFilter = (key) => {
+    const updatedQuery = { ...searchQuery };
+    delete updatedQuery[key];
+
+    // Also remove IDs linked with names
+    if (key === 'clientName') delete updatedQuery.clientId;
+    if (key === 'driverName') delete updatedQuery.driverId;
+
+    setSearchQuery(updatedQuery);
+  };
+
+
+  const handleRemove = (index) => {
+    const updated = filters.filter((_, i) => i !== index);
+    setFilters(updated);
+  };
   useEffect(() => {
     const handleEsc = (event) => {
       if (event.key === 'Escape') {
@@ -58,6 +84,18 @@ const Dashboard = () => {
     };
   }, [navigate]);
 
+  const handleSearchClick = (searchTerm, selectedOption) => {
+    console.log('clicked',searchTerm,selectedOption);
+    getSeachFilterResult(searchQuery, "admin")
+      .then((res) => {
+        onSearch(res);
+        handleClose();
+      })
+      .catch((err) => {
+        console.error('Filter API Error:', err);
+      });
+  };
+
   useEffect(() => {
     const hasFilters =
       searchQuery.currentStatus ||
@@ -67,7 +105,7 @@ const Dashboard = () => {
       searchQuery.toDate ||
       searchQuery.jobId ||
       searchQuery.clientName ||
-      searchQuery.driverName;
+      searchQuery.driverName; 
 
     if (hasFilters && searchTerm.trim()) {
       handleSearchClick(searchTerm, searchQuery);
@@ -194,6 +232,8 @@ const Dashboard = () => {
       jobId: '',
       clientName: '',
       driverName: '',
+      serviceType:'',
+      serviceCode:''
     })
   }
 
@@ -238,6 +278,7 @@ const Dashboard = () => {
     setData(sortedData)
   }
 
+
   useEffect(() => {
     // Retrieve the selected item from local storage if it exists
     const storedSelectedItem = sessionStorage.getItem('selectedItem')
@@ -245,6 +286,7 @@ const Dashboard = () => {
       setSelectedItem(JSON.parse(storedSelectedItem))
     }
   }, [])
+
 
   // // Pagination
   // const handlePageChange = (page) => {
@@ -317,6 +359,12 @@ const Dashboard = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
+
+      {Object.values(searchQuery).some((v) => v) && (
+        <div className="filter-container">
+          <FilterTags searchQuery={searchQuery} onRemoveFilter={handleRemoveFilter} />
+        </div>
+      )}
 
       <Tabs activeKey={activeTab} onSelect={handleTabSelect} defaultActiveKey="todaysJob" id="todays-job" className="mb-3 custom-tabs">
         {/* Today's Job Tab */}
@@ -507,6 +555,7 @@ const Dashboard = () => {
               />
               </Col>
             </Row> */}
+
 
         {/* All Jobs Tab */}
         <Tab eventKey="allJobs" title="All Jobs" className="client-rates-table">

@@ -13,13 +13,13 @@ import CIcon from '@coreui/icons-react'
 
 import { AppSidebarNav } from './AppSidebarNav'
 
-import  logo  from '../assets/images/Logos/logo.png'
+import logo from '../assets/images/Logos/logo.png'
 import { sygnet } from 'src/assets/brand/sygnet'
 
 // sidebar nav config
 // import navigation from '../_nav'
 // my own sidebar
-import navigation from '../_new_nav_client'
+import { navigation, bottomNavItems } from '../_new_nav_client'
 
 const AppSidebarCLient = () => {
   const dispatch = useDispatch()
@@ -29,7 +29,7 @@ const AppSidebarCLient = () => {
   return (
     <CSidebar
       className="border-end"
-      colorScheme="dark"
+      // colorScheme="dark"
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
@@ -37,9 +37,8 @@ const AppSidebarCLient = () => {
         dispatch({ type: 'set', sidebarShow: visible })
       }}
     >
-      <CSidebarHeader className="border-bottom">
+      {/* <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/">
-          {/* <CIcon customClassName="sidebar-brand-full" icon={logo} height={32} /> */}
           <img
             width={'100%'}
             style={{ aspectRatio: 3 / 2, objectFit: 'contain'}}
@@ -47,19 +46,34 @@ const AppSidebarCLient = () => {
             className='mx-auto '
             src={logo}
           />
-          {/* <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} /> */}
         </CSidebarBrand>
         <CCloseButton
           className="d-lg-none"
           dark
           onClick={() => dispatch({ type: 'set', sidebarShow: false })}
         />
-      </CSidebarHeader>
-      <AppSidebarNav items={navigation} />
-      <CSidebarFooter className="border-top d-none d-lg-flex">
-        <CSidebarToggler
+      </CSidebarHeader> */}
+      <div className="flex-grow-1 d-flex flex-column">
+        <AppSidebarNav items={navigation} />
+      </div>
+      <div className="border-top">
+        <AppSidebarNav items={bottomNavItems} />
+      </div>
+
+      <CSidebarFooter className="border-top d-flex flex-column mt-auto">
+          <div className="d-flex flex-row align-items-center">
+            <div className="profile-icon me-2">
+              <p className="mb-0">RR</p>
+            </div>
+            <div>
+              <h6 className="mb-0">Name</h6>
+              <p className="mb-0">email@gmail.com</p>
+            </div>
+          </div>
+        <small className="text-secondary mt-3 d-block">Version 1.0.1</small>
+        {/* <CSidebarToggler
           onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
-        />
+        /> */}
       </CSidebarFooter>
     </CSidebar>
   )

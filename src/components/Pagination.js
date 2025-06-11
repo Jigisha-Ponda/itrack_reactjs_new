@@ -21,7 +21,7 @@ const MyPagination = ({ totalPages, currentPage, onPageChange }) => {
     }
 
     // First page
-    if (startPage > 1) {
+    if (startPage >= 1) {
       pageItems.push(
         <Pagination.Item key={1} onClick={() => handleClick(1)}>
           1

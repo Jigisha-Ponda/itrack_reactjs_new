@@ -27,25 +27,25 @@ function LocationMapClient() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-  
+
       try {
         const res = await get(`/client/job?id=${id}`, "client");
-  
+
         if (res.data.status) {
           const job = res.data.data;
-  
+
           const startLoc = `${job.pickUpDetails.pickupAddress.latitude},${job.pickUpDetails.pickupAddress.longitude}`;
           const endLoc = `${job.dropOfDetails.deliveryAddress.latitude},${job.dropOfDetails.deliveryAddress.longitude}`;
           const driverLoc = job.driverId
             ? `${job.driverId.location.latt},${job.driverId.location.long}`
             : startLoc;
-  
+
           const delivered = `${job.dropOfDetails.dropOfLocationId.latitude},${job.dropOfDetails.dropOfLocationId.longitude}`;
           const pickup = `${job.pickUpDetails.pickupLocationId.latitude},${job.pickUpDetails.pickupLocationId.longitude}`;
-  
+
           // 🔐 Get token from localStorage or auth context
           const token = localStorage.getItem("clientToken"); // or whatever your token key is
-  
+
           const locationHistoryRes = await get(
             `/client/locationHistoryByJob?jobId=${id}`,
             {
@@ -54,20 +54,20 @@ function LocationMapClient() {
               },
             }
           );
-  
+
           let locationHistory = [];
           console.log(locationHistoryRes);
           console.log("locationHistoryRes");
           if (locationHistoryRes.data.status) {
             locationHistory = locationHistoryRes.data.data || [];
-  
+
             // Remove duplicates
             locationHistory = locationHistory.filter((loc, index, self) =>
               index === self.findIndex((l) => l.lat === loc.lat && l.lng === loc.lng)
             );
           }
 
-  
+
           setMapData({
             start: startLoc,
             end: endLoc,
@@ -83,10 +83,10 @@ function LocationMapClient() {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
 
   console.log("data", data)
   console.log("datadatadatadata")
@@ -114,7 +114,7 @@ function LocationMapClient() {
       fillOpacity: 1.0,
       strokeWeight: 0,
       scale: 1.5,
-      info: 'PickedUp Location',
+      info: 'Picked Up Location',
     },
     delivered: {
       path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
@@ -124,27 +124,24 @@ function LocationMapClient() {
       scale: 1.5,
       info: 'Drop-off Location',
     },
+    driver: {
+      path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+      fillColor: "blue", 
+      fillOpacity: 1.0,
+      strokeWeight: 0,
+      scale: 1.5,
+      info: 'Driver Location',
+    },
   };
 
 
   return (
     <>
-      <div style={{ height: '400px', width: '100%' }}>
+      <div className="w-100 d-flex align-items-center">
         <h5>Package Location</h5>
-        <div className="marker-info w-50 mx-auto d-block mb-3 p-3" style={{ border: '1px solid #ccc', borderRadius: '5px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-            {Object.keys(markerIcons).map(key => (
-              <div key={key} style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ width: '24px', height: '24px', marginRight: '10px' }}>
-                  <svg viewBox="0 0 24 24" fill={markerIcons[key].fillColor} width="24" height="24">
-                    <path d={markerIcons[key].path} />
-                  </svg>
-                </div>
-                <p style={{ margin: 0 }}>{markerIcons[key].info}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+
+      </div>
+      <div style={{ height: '100%', width: '100%', padding: '20px', background: '#fff', marginTop: '10px' }}>
         {
           loading && mapData ? <Spinner animation="border" role="status">
           </Spinner> : <LocationNavigation
@@ -156,6 +153,20 @@ function LocationMapClient() {
             history={mapData.history}
           />
         }
+      </div>
+      <div className="marker-info w-100 d-block pt-3 px-3" style={{ border: '1px solid #ccc', borderRadius: '5px' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '20px' }}>
+          {Object.keys(markerIcons).map(key => (
+            <div key={key} style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '24px', height: '24px', marginRight: '10px' }}>
+                <svg viewBox="0 0 24 24" fill={markerIcons[key].fillColor} width="24" height="24">
+                  <path d={markerIcons[key].path} />
+                </svg>
+              </div>
+              <p style={{ margin: 0 }}>{markerIcons[key].info}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </>
   )

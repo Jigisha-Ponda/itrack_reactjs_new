@@ -37,14 +37,14 @@ const FilterOffCanvas = ({ show, handleClose, onApplyFilter, role, searchQuery, 
         { value: 'AKE', label: 'AKE' },
         { value: 'AKH', label: 'AKH' },
         { value: 'AAX', label: 'AAX' }
-      ];
-      const serviceTypes = [
+    ];
+    const serviceTypes = [
         { value: 'Per Unit', label: 'Per Unit' },
         { value: 'Per Hour', label: 'Per Hour' },
         { value: 'Flat Rate', label: 'Flat Rate' },
         { value: 'Custom', label: 'Custom' }
-      ];
-            
+    ];
+
     const [selectedOption, setSelectedOption] = useState(null);
 
     useEffect(() => {
@@ -170,7 +170,7 @@ const FilterOffCanvas = ({ show, handleClose, onApplyFilter, role, searchQuery, 
                         </Col>
                     </Row>
                 )}
-  <Row>
+                <Row>
                     <Col md={12} className="mt-3">
                         <label htmlFor="serviceTypeDropdown" className="form-label fw-semibold">
                             Service Type
@@ -240,11 +240,10 @@ const FilterOffCanvas = ({ show, handleClose, onApplyFilter, role, searchQuery, 
 
                 <div className="my-4" />
 
-              
+
 
                 <Row className='mx-auto w-100'>
                     <Button className="custom-btn" onClick={() => onApplyFilter(selectedOption)}>Apply Filter</Button>
-
                 </Row>
 
             </Offcanvas.Body>

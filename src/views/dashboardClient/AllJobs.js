@@ -19,6 +19,8 @@ import getStatusStyles from '../../services/getStatusColor'
 import { LuChevronDown } from 'react-icons/lu'
 import sortData from '../../services/sortData'
 import { getFormattedDAndT } from '../../lib/getFormatedDate'
+import { FaSyncAlt } from 'react-icons/fa'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 const AllJobs = () => {
   let assignPermission = localStorage.getItem('clientDriverAssign')
@@ -154,6 +156,7 @@ const AllJobs = () => {
     }
 
     const fetchData = () => {
+      console.log('fetch data called');
       get(`/client/jobFilter`, 'client')
         .then((response) => {
           setData(response?.data?.data)
@@ -208,12 +211,75 @@ const AllJobs = () => {
       setSelectedJob(JSON.parse(storedSelectedItem))
     }
   }, [])
+
+  const handleRefresh = () => {
+    setLoading(true)
+    setMessage('')
+
+    let queryParams = []
+
+    if (searchQuery.currentStatus)
+      queryParams.push(`currentStatus=${searchQuery.currentStatus}`)
+    if (searchQuery.clientId) queryParams.push(`clientId=${searchQuery.clientId}`)
+    if (searchQuery.driverId) queryParams.push(`driverId=${searchQuery.driverId}`)
+    if (searchQuery.fromDate) queryParams.push(`fromDate=${searchQuery.fromDate}`)
+    if (searchQuery.toDate) queryParams.push(`toDate=${searchQuery.toDate}`)
+    if (searchQuery.jobId) queryParams.push(`jobId=${searchQuery.jobId}`)
+    if (searchQuery.clientName) queryParams.push(`clientName=${searchQuery.clientName}`)
+    if (searchQuery.driverName) queryParams.push(`driverName=${searchQuery.driverName}`)
+
+    const query = queryParams.join('&')
+
+    get(`/admin/info/jobFilter?${query}`, 'admin')
+      .then((response) => {
+        if (response?.data?.status) {
+          if (response?.data?.data?.length === 0) {
+            setMessage('No data found')
+          }
+          setData(response?.data?.data)
+          setLoading(false)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        setLoading(false)
+      })
+  }
   return (
     <>
+      <Row className="d-flex pb-3 align-items-center justify-content-between">
+        <Col md={2} className="m-0">
+          <h3>All Bookings</h3>
+        </Col>
+
+        <Col md={10} className="d-flex flex-wrap justify-content-start justify-content-md-end align-items-center gap-3 mt-3 mt-md-0">
+          <Button
+            variant="dark"
+            className="input-group-text cursor-pointer custom-icon-btn"
+            onClick={handleRefresh}
+          >
+            <FaSyncAlt />
+          </Button>
+          <DateRangeFilter
+            setData={setData}
+            role="client"
+            setMessage={setMessage}
+            setIsFiltering={setIsFiltering}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+          <Button onClick={() => setFilterShow(true)} className="input-group-text cursor-pointer custom-icon-btn">
+            <FaFilter />
+          </Button>
+          <Button onClick={handleClear} style={{ fontSize: '12px' }} className="custom-btn">
+            Clear Filters
+          </Button>
+        </Col>
+      </Row>
       <Row>
         <Col md={12}>
-          <Container className="bg-white py-3 px-2 rounded-3">
-            <Row className="mb-3 justify-content-between">
+          <div className="client-rates-table">
+            {/* <Row className="mb-3 justify-content-between">
               <Col md={4} className="d-flex align-items-center gap-3">
                 show:
                 <Form.Select value={limit} onChange={handleLimitChange}>
@@ -259,104 +325,49 @@ const AllJobs = () => {
               <Col md={6} className="d-flex justify-content-end">
                 <JsonToExcelBtn jsonData={data} fileName="Booking" />
               </Col>
-            </Row>
+            </Row> */}
 
-            <Table className="mt-3" bordered responsive hover>
+            <Table className="custom-table" bordered responsive hover>
               <thead style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
                 <tr>
-                  <th className="text-center">
-                   
-                    Client <LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('clientId.companyName')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
+                    Client 
                   </th>
-                  <th className="text-center">
-                    
-                    Ready Time<LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('pickUpDetails.readyTime')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('pickUpDetails.readyTime')}>
+                    Ready Time
                   </th>
-                  <th className="text-center">
-                    
-                    Cuttoff Time<LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('dropOfDetails.cutOffTime')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.cutOffTime')}>
+                    Cuttoff Time
                   </th>
-                  <th className="text-center">AWB<LuChevronDown
-                                      className="cursor-pointer m-1"
-                                      size={20}
-                                      onClick={() => handleSort('AWB')}
-                                    /></th>
-                  <th className="text-center">Pieces<LuChevronDown
-                                      className="cursor-pointer m-1"
-                                      size={20}
-                                      onClick={() => handleSort('pieces')}
-                                    /></th>
-                  <th className="text-center">
-                    
-                    Service Type<LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('serviceTypeId.text')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('AWB')}>
+                    AWB
                   </th>
-                  <th className="text-center">
-                    
-                    Service Code<LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('serviceCodeId.text')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('pieces')}>
+                    Pieces
                   </th>
-                  <th className="text-center">
-                    
-                    Pickup From<LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('serviceTypeId.text')}>
+                    Service Type
                   </th>
-
-                  <th className="text-center">
-                    
-                    Deliver To<LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('serviceCodeId.text')}>
+                    Service Code
                   </th>
-
-                  <th className="text-center">Job Id<LuChevronDown
-                                      className="cursor-pointer m-1"
-                                      size={20}
-                                      onClick={() => handleSort('uid')}
-                                    /></th>
-
-                  <th className="text-center">
-                    
-                    Driver<LuChevronDown
-                      className="cursor-pointer m-1 "
-                      size={20}
-                      onClick={() => handleSort('driverId.firstname')}
-                    />
+                  <th className="text-center"onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')}>
+                    Pickup From
                   </th>
-
-                  <th className="text-center">
-                    
-                    Status<LuChevronDown
-                      className="cursor-pointer m-1"
-                      size={20}
-                      onClick={() => handleSort('currentStatus')}
-                    />
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')}>
+                    Deliver To
                   </th>
-                  <th className="text-center" colSpan={4}>
-                    Action
+                  <th className="text-center" onClick={() => handleSort('uid')}>
+                    Job Id
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
+                    Driver
+                  </th>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '150px' }} onClick={() => handleSort('currentStatus')}>
+                    Status
+                  </th>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '70px' }}>
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -464,7 +475,50 @@ const AllJobs = () => {
                             {status}
                           </div>
                         </td>
-                        <td
+                        <td className="text-center action-dropdown-menu" style={{ backgroundColor: isSelected ? '#E0E0E0' : 'transparent' }}>
+                            <div className="dropdown">
+                              <button
+                                className="btn btn-link p-0 border-0"
+                                type="button"
+                                id={`dropdownMenuButton-${item._id}`}
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                <BsThreeDotsVertical size={18} />
+                              </button>
+                              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby={`dropdownMenuButton-${item._id}`}>
+                                <li>
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={() => handleEdit(item)} 
+                                  >
+                                    Edit Job
+                                  </button>
+                                </li>
+                                {assignPermission === 'true' && !item?.driverId && (
+                                  <li>
+                                    <button
+                                      className="dropdown-item"
+                                      onClick={() => handleShowAssign(item)}
+                                    >
+                                      Change Driver
+                                    </button>
+                                  </li>
+                                )}
+                                {trackPermission === 'true' && (
+                                  <li>
+                                    <button
+                                      className="dropdown-item"
+                                      onClick={() => navigate(`/client/dashboard/location/${item._id}`)}
+                                    >
+                                      Package Location
+                                    </button>
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        {/* <td
                           className="text-center cursor-pointer "
                           style={{ backgroundColor: isSelected ? '#E0E0E0' : 'transparent' }}
                         >
@@ -474,10 +528,10 @@ const AllJobs = () => {
                             ''
                           )}
                         </td>
-                        {/* <td className="text-center cursor-pointer">
+                        <td className="text-center cursor-pointer">
 
                                                         <FaEye className="text-success" onClick={() => handleView(item)} />
-                                                    </td> */}
+                                                    </td>
                         {assignPermission === 'true' ? (
                           <td
                             className="text-center cursor-pointer"
@@ -505,20 +559,37 @@ const AllJobs = () => {
                           </td>
                         ) : (
                           ''
-                        )}
+                        )} */}
                       </tr>
                     )
                   })
                 )}
               </tbody>
             </Table>
-          </Container>
+          </div>
         </Col>
       </Row>
 
-      <div className="d-flex justify-content-center">
-        <MyPagination totalPages={totalPages} currentPage={page} onPageChange={handlePageChange} />
-      </div>
+      <Row className="mb-3 justify-content-between">
+        <Col md={6} className="d-flex align-items-center gap-2 ">
+          Show Entries
+          <Col md={2}>
+            <Form.Select value={limit} onChange={handleLimitChange}>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={30}>30</option>
+                </Form.Select>
+          </Col>
+        </Col>
+        <Col md={6} className="d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
+          <MyPagination
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={handlePageChange}
+          />
+        </Col>
+      </Row>
+
       {show ? (
         <EditJob
           show={show}

@@ -82,15 +82,15 @@ const AssignDriverModal = ({ show, setShow, jobId, setIsRefresh, isReferesh, rol
     }, []); // Run once on component mount
 
     return (
-        <Modal show={show} onHide={handleClose} centered>
+        <Modal show={show} onHide={handleClose} centered dialogClassName="custom-modal">
             <Modal.Header closeButton>
-                <Modal.Title>Assign Driver</Modal.Title>
+                <Modal.Title>Change Driver</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="pt-2 pb-4">
                 <Dropdown>
-                    <Dropdown.Toggle variant="primary" id="lazy-dropdown" className='w-75 mx-auto d-block'>
+                    <Dropdown.Toggle variant="primary" id="lazy-dropdown" className='w-75 mx-auto d-block  custom-bootstrap-dropdown'>
                         {
-                            selectedDriver ? `${selectedDriver.firstname} ${selectedDriver.lastname}` : 'Select a Driver'
+                            selectedDriver ? `${selectedDriver.firstname} ${selectedDriver.lastname}` : 'Select from the list'
                         }
                     </Dropdown.Toggle>
                     <Dropdown.Menu
@@ -115,13 +115,14 @@ const AssignDriverModal = ({ show, setShow, jobId, setIsRefresh, isReferesh, rol
                     </Dropdown.Menu>
                 </Dropdown>
             </Modal.Body>
-            <Modal.Footer className='mt-5'>
+            <Modal.Footer>
                 {
-                    selectedDriver && <button className='btn btn-primary'
+                    // selectedDriver && 
+                    <button className='btn btn-primary'
                         onClick={handleAssignDriver}
-                    >Assign</button>
+                    >Confirm Change</button>
                 }
-                <button className='btn btn-secondary' onClick={handleClose}>Close</button>
+                {/* <button className='btn btn-secondary' onClick={handleClose}>Close</button> */}
             </Modal.Footer>
         </Modal>
     );

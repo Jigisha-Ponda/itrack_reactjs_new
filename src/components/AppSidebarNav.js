@@ -23,7 +23,6 @@ export const AppSidebarNav = ({ items }) => {
     } else {
       localStorage.removeItem('admintoken')
       sessionStorage.removeItem('selectedItem')
-
       navigate('/')
     }
   }
@@ -52,17 +51,28 @@ export const AppSidebarNav = ({ items }) => {
   }
 
   const navItem = (item, index, indent = false) => {
-    const { component, name, badge, icon, ...rest } = item
+    const { component, name, badge, icon, to, ...rest } = item
+    const isLogout = name?.toLowerCase() === 'logout'
+    console.log('is logout', isLogout);
     const Component = component
     return (
       <Component as="div" key={index}>
-        {rest.to || rest.href ? (
+        {isLogout ? (
+          <CNavLink role="button" onClick={handleLogout}>
+            {navLink(name, icon, badge, indent)}
+          </CNavLink>
+        ) : (
+          <CNavLink {...(to && { as: NavLink, to })} {...rest}>
+            {navLink(name, icon, badge, indent)}
+          </CNavLink>
+        )}
+        {/* {rest.to || rest.href ? (
           <CNavLink {...(rest.to && { as: NavLink })} {...rest}>
             {navLink(name, icon, badge, indent)}
           </CNavLink>
         ) : (
           navLink(name, icon, badge, indent)
-        )}
+        )} */}
       </Component>
     )
   }
@@ -80,16 +90,17 @@ export const AppSidebarNav = ({ items }) => {
   }
 
   return (
-    <CSidebarNav as={SimpleBar}>
-      {items &&
-        items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
-      <CNavItem as="div" className="mt-auto border-top border-bottom">
+    <>
+      <CSidebarNav as={SimpleBar}>
+        {items &&
+          items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+        {/* <CNavItem as="div" className="mt-auto border-top border-bottom">
         <CNavLink role="button" onClick={handleLogout}>
           <CIcon icon={cilAccountLogout} className="me-3" />
           &nbsp; &nbsp; Logout
         </CNavLink>
-      </CNavItem>
-      <div className="nav-item">
+      </CNavItem> */}
+        {/* <div className="nav-item">
         <div className="d-flex flex-row align-items-center my-3">
           <div className="profile-icon me-2">
             <p className="mb-0">RR</p>
@@ -100,8 +111,11 @@ export const AppSidebarNav = ({ items }) => {
           </div>
         </div>
         <small className="text-secondary">Version 1.0.1</small>
-      </div>
-    </CSidebarNav>
+      </div> */}
+
+      </CSidebarNav>
+
+    </>
   )
 }
 

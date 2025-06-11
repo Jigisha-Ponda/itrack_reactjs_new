@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { clientToken, clientUrl, get_req } from '../../lib/clietnRequests'
 import axiosInstance from '../../lib/axiosInstance'
 import moment from 'moment-timezone';
+import { CButton } from '@coreui/react'
+import Select from 'react-select';
 
 const AddClientJob = () => {
   const navigate = useNavigate()
@@ -16,22 +18,22 @@ const AddClientJob = () => {
   const [serviceTypes, setServiceTypes] = useState([])
   const [pickupLocations, setPickupLocations] = useState([])
   const [dropLocations, setDropLocations] = useState([])
-  const [serviceCode, setServiceCode] = useState('')
+  const [serviceCode, setServiceCode] = useState([])
   const [formErrors, setFormErrors] = useState({})
   const [formData, setFormData] = useState({
     AWB: '',
     pieces: '',
     weight: '',
-    serviceTypeId: '',
+    // serviceTypeId: '',
     custRefNumber: '',
-    serviceCodeId: '',
+    // serviceCodeId: '',
     readyTime: '',
     cutoffTime: '',
     attachments: [],
-    pickupLocationId: '',
-    dropOfLocationId: '',
+    // pickupLocationId: '',
+    // dropOfLocationId: '',
     note: '',
-    isVpap: '',
+    // isVpap: '',
     booked_by: '',
   })
   const [dropDownData, setDropDownData] = useState({
@@ -60,9 +62,9 @@ const AddClientJob = () => {
   }
 
   const getMelbourneTime = () => {
-      return moment().tz("Australia/Melbourne").format("YYYY-MM-DDTHH:mm");
-    };
-  
+    return moment().tz("Australia/Melbourne").format("YYYY-MM-DDTHH:mm");
+  };
+
 
   // handle file change
   const handleFileChange = (e) => {
@@ -189,16 +191,110 @@ const AddClientJob = () => {
     })
   }, [])
 
+  const serviceTypeOptions = serviceTypes
+    .sort((a, b) => a.text.localeCompare(b.text))
+    .map((type) => ({
+      value: type._id,
+      label: type.text,
+    }));
+
+  const handleServiceTypeChange = (selectedOption) => {
+    setDropDownData((prev) => ({
+      ...prev,
+      serviceType: {
+        _id: selectedOption?.value,
+        text: selectedOption?.label,
+      },
+    }));
+  
+    // Optionally clear error
+    setFormErrors((prev) => ({
+      ...prev,
+      serviceType: '',
+    }));
+  };
+
+  const serviceCodeOptions = serviceCode
+    .sort((a, b) => a.text.localeCompare(b.text))
+    .map((code) => ({
+      value: code._id,
+      label: code.text,
+    }));
+
+  // Handle serviceCode select change
+  const handleServiceCodeChange = (selectedOption) => {
+    setDropDownData({
+      ...dropDownData,
+      serviceCode: {
+        _id: selectedOption?.value || '',
+        text: selectedOption?.label || '',
+      },
+    });
+  };
+
+  const pickupLocationOptions = pickupLocations
+    ?.sort((a, b) => a.customName.localeCompare(b.customName))
+    .map((location) => ({
+      value: location._id,
+      label: location.customName,
+    }));
+
+  const dropLocationOptions = dropLocations
+    ?.sort((a, b) => a.customName.localeCompare(b.customName))
+    .map((location) => ({
+      value: location._id,
+      label: location.customName,
+    }));
+
+  // Handle pickupLocation selection
+  const handlePickupLocationChange = (selectedOption) => {
+    setDropDownData({
+      ...dropDownData,
+      pickupLocation: {
+        _id: selectedOption?.value || '',
+        name: selectedOption?.label || '',
+      },
+    });
+  };
+
+  const handleDropLocationChange = (selectedOption) => {
+    setDropDownData((prev) => ({
+      ...prev,
+      dropLocation: {
+        name: selectedOption.label,
+        _id: selectedOption.value,
+      },
+    }));
+  };
+
+  const vpapOptions = [
+    { value: 'true', label: 'Yes' },
+    { value: 'false', label: 'No' },
+  ];
+
+  const handleVpapChange = (selectedOption) => {
+    setFormData((prev) => ({ ...prev, isVpap: selectedOption.value }));
+  };
+
   return (
     <>
-      <Row>
+      <Row className="align-items-center">
         <Col>
-          <h5>Add Job</h5>
+          <h4 className="mb-0">New Booking</h4>
+        </Col>
+        <Col className="text-end">
+          {loading5 ? (
+            <Spinner animation="border" />
+          ) : (
+            <CButton className="custom-btn" onClick={handleSubmit}>
+              Add Booking
+            </CButton>
+          )}
         </Col>
       </Row>
-      <Container className="shadow px-3 py-3 rounded-4 bg-white">
+      <div className="mt-3 px-3 py-3 bg-white custom-form">
         <Row>
-          <Col md={6} className="mt-3">
+          <Col md={6}>
             <Form.Group>
               <Form.Label>AWB</Form.Label>
               <Form.Control
@@ -214,6 +310,24 @@ const AddClientJob = () => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Customer Reference No</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Text"
+                name="custRefNumber"
+                onChange={(e) => handleChange(e)}
+                value={formData?.custRefNumber}
+                isInvalid={!!formErrors.custRefNumber}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.custRefNumber}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Pieces</Form.Label>
@@ -230,8 +344,6 @@ const AddClientJob = () => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Weight</Form.Label>
@@ -248,9 +360,11 @@ const AddClientJob = () => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
+        </Row>
+        <Row>
           <Col md={6} className="mt-3">
             <Form.Label>Service Type</Form.Label>
-            <Dropdown data-bs-theme="primary">
+            {/* <Dropdown data-bs-theme="primary">
               <Dropdown.Toggle
                 id="dropdown-button-dark-example1"
                 variant="secondary"
@@ -285,33 +399,32 @@ const AddClientJob = () => {
                 )}
               </Dropdown.Menu>
 
-            </Dropdown>
+            </Dropdown> */}
+            <Select
+              className={`w-100 ${formErrors.serviceType ? 'custom-select__control--is-invalid' : ''}`}
+              classNamePrefix="custom-select"
+              options={serviceTypeOptions}
+              value={
+                dropDownData.serviceType._id
+                  ? {
+                    value: dropDownData.serviceType._id,
+                    label: dropDownData.serviceType.text,
+                  }
+                  : null
+              }
+              onChange={handleServiceTypeChange}
+              placeholder="Select Service Type"
+              isSearchable
+              isLoading={loading}
+            />
             {formErrors.serviceType && (
               <div className="invalid-feedback d-block">{formErrors.serviceType}</div>
             )}
           </Col>
-        </Row>
-        <Row>
-          <Col md={6} className="mt-3">
-            <Form.Group>
-              <Form.Label>Customer Reference No</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Text"
-                name="custRefNumber"
-                onChange={(e) => handleChange(e)}
-                value={formData?.custRefNumber}
-                isInvalid={!!formErrors.custRefNumber}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formErrors.custRefNumber}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Service Code</Form.Label>
-              <Dropdown data-bs-theme="dark">
+              {/* <Dropdown data-bs-theme="dark">
                 <Dropdown.Toggle
                   id="dropdown-button-dark-example1"
                   variant="secondary"
@@ -345,7 +458,24 @@ const AddClientJob = () => {
                     })
                   )}
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown> */}
+              <Select
+                className="w-100 custom-select"
+                classNamePrefix="custom-select"
+                options={serviceCodeOptions}
+                value={
+                  dropDownData.serviceCode._id
+                    ? {
+                      value: dropDownData.serviceCode._id,
+                      label: dropDownData.serviceCode.text,
+                    }
+                    : null
+                }
+                onChange={handleServiceCodeChange}
+                placeholder="Select Service Code"
+                isSearchable
+                isLoading={loading2}
+              />
               {formErrors.serviceCode && (
                 <div className="invalid-feedback d-block">{formErrors.serviceCode}</div>
               )}
@@ -385,24 +515,8 @@ const AddClientJob = () => {
         <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
-              <Form.Label>Upload Attachment</Form.Label>
-              <Form.Control
-                type="file"
-                placeholder="Text"
-                name="attachments"
-                multiple
-                onChange={(e) => handleFileChange(e)}
-                isInvalid={!!formErrors.attachments}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formErrors.attachments}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
-          <Col md={6} className="mt-3">
-            <Form.Group>
               <Form.Label>Pickup Location</Form.Label>
-              <Dropdown data-bs-theme="dark">
+              {/* <Dropdown data-bs-theme="dark">
                 <Dropdown.Toggle
                   id="dropdown-button-dark-example1"
                   variant="secondary"
@@ -439,18 +553,33 @@ const AddClientJob = () => {
                     })
                   )}
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown> */}
+              <Select
+                className="w-100 custom-select"
+                classNamePrefix="custom-select"
+                options={pickupLocationOptions}
+                value={
+                  dropDownData.pickupLocation._id
+                    ? {
+                      value: dropDownData.pickupLocation._id,
+                      label: dropDownData.pickupLocation.name,
+                    }
+                    : null
+                }
+                onChange={handlePickupLocationChange}
+                placeholder="Select Pickup Location"
+                isSearchable
+                isLoading={loading3}
+              />
               {formErrors.pickupLocation && (
                 <div className="invalid-feedback d-block">{formErrors.pickupLocation}</div>
               )}
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Drop Location</Form.Label>
-              <Dropdown data-bs-theme="dark">
+              {/* <Dropdown data-bs-theme="dark">
                 <Dropdown.Toggle
                   id="dropdown-button-dark-example1"
                   variant="secondary"
@@ -484,19 +613,92 @@ const AddClientJob = () => {
                     })
                   )}
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown> */}
+              <Select
+                className="w-100 custom-select"
+                classNamePrefix="custom-select"
+                options={dropLocationOptions}
+                value={
+                  dropDownData.dropLocation._id
+                    ? {
+                      value: dropDownData.dropLocation._id,
+                      label: dropDownData.dropLocation.name,
+                    }
+                    : null
+                }
+                onChange={handleDropLocationChange}
+                placeholder="Select Drop Location"
+                isSearchable
+                isLoading={loading4}
+              />
               {formErrors.dropLocation && (
                 <div className="invalid-feedback d-block">{formErrors.dropLocation}</div>
               )}
             </Form.Group>
           </Col>
+        </Row>
+        <Row>
+          <Col md={6} className="mt-3">
+            <Form.Group>
+              <Form.Label>Upload Attachment</Form.Label>
+              <Form.Control
+                type="file"
+                placeholder="Text"
+                name="attachments"
+                multiple
+                onChange={(e) => handleFileChange(e)}
+                isInvalid={!!formErrors.attachments}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.attachments}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col md={6} className="mt-3">
+            <Form.Label>VPAP</Form.Label>
+            {/* <Dropdown data-bs-theme="dark">
+              <Dropdown.Toggle
+                id="dropdown-button-dark-example1"
+                variant="secondary"
+                className="w-100 dropdown-css-custom d-flex justify-content-between align-items-center"
+              >
+                {formData.isVpap ? (formData.isVpap === 'true' ? 'Yes' : 'No') : 'Need VPAP'}
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="w-100">
+                <Dropdown.Item onClick={() => setFormData({ ...formData, isVpap: 'true' })}>
+                  Yes
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => setFormData({ ...formData, isVpap: 'false' })}>
+                  No
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown> */}
+            <Select
+              className="w-100 custom-select"
+              classNamePrefix="custom-select"
+              options={vpapOptions}
+              value={
+                formData.isVpap
+                  ? { value: formData.isVpap, label: formData.isVpap === 'true' ? 'Yes' : 'No' }
+                  : null
+              }
+              onChange={handleVpapChange}
+              placeholder="Need VPAP"
+              isSearchable={false}
+            />
+            {formErrors.isVpap && (
+              <div className="invalid-feedback d-block">{formErrors.isVpap}</div>
+            )}
+          </Col>
+        </Row>
+        <Row>
           <Col md={6} className="mt-3">
             <Form.Group>
               <Form.Label>Note</Form.Label>
               <Form.Control
                 as="textarea"
-                rows={4}
-                placeholder="Enter your note here..."
+                rows={1}
+                placeholder="Enter your note Here"
                 name="note"
                 onChange={(e) => handleChange(e)}
                 value={formData?.note}
@@ -507,64 +709,35 @@ const AddClientJob = () => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
+          <Col md={6} className="mt-3">
+            <Form.Group>
+              <Form.Label>Booked By</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your text here"
+                name="booked_by"
+                onChange={(e) => handleChange(e)}
+                value={formData?.booked_by}
+                isInvalid={!!formErrors.booked_by}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.booked_by}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
         </Row>
-        <Row>
-          <br />
-          <Row>
-            <Col md={6} className="mt-3">
-              <Form.Label>VPAP</Form.Label>
-              <Dropdown data-bs-theme="dark">
-                <Dropdown.Toggle
-                  id="dropdown-button-dark-example1"
-                  variant="secondary"
-                  className="w-100 dropdown-css-custom d-flex justify-content-between align-items-center"
-                >
-                  {formData.isVpap ? (formData.isVpap === 'true' ? 'Yes' : 'No') : 'Need VPAP'}
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="w-100">
-                  <Dropdown.Item onClick={() => setFormData({ ...formData, isVpap: 'true' })}>
-                    Yes
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => setFormData({ ...formData, isVpap: 'false' })}>
-                    No
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-              {formErrors.isVpap && (
-                <div className="invalid-feedback d-block">{formErrors.isVpap}</div>
-              )}
-
-            </Col>
-            <Col md={6} className="mt-3">
-              <Form.Group>
-                <Form.Label>Booked By</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Text"
-                  name="booked_by"
-                  onChange={(e) => handleChange(e)}
-                  value={formData?.booked_by}
-                  isInvalid={!!formErrors.booked_by}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {formErrors.booked_by}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={3} className="mt-3">
-              {loading5 ? (
-                <Spinner animation="border" />
-              ) : (
-                <Button variant="success" className="text-white px-4 p-2" onClick={handleSubmit}>
-                  Add Booking
-                </Button>
-              )}
-            </Col>
-          </Row>
-        </Row>
-      </Container>
+        {/* <Row>
+          <Col md={3} className="mt-3">
+            {loading5 ? (
+              <Spinner animation="border" />
+            ) : (
+              <Button variant="success" className="text-white px-4 p-2" onClick={handleSubmit}>
+                Add Booking
+              </Button>
+            )}
+          </Col>
+        </Row> */}
+      </div>
     </>
   )
 }

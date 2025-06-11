@@ -295,7 +295,7 @@ export default function ClientJobDetails() {
                           name="jobId"
                           value={job?.uid || ""}
                           placeholder="Enter Job ID"
-                          readOnly // Optional: remove this if the field should be editable
+                          readOnly
                         />
                       </Form.Group>
                     </Col>

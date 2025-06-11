@@ -20,10 +20,11 @@ import {
   cilUser,
   cilTask,
   cilSpreadsheet,
+  cilExitToApp
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
-const _new_nav_client = [
+const navigation = [
   {
     component: CNavItem,
     name: 'Dashboard',
@@ -52,16 +53,16 @@ const _new_nav_client = [
       },
     ],
   },
-  {
-    component: CNavItem,
-    name: 'Profile',
-    to: '/client/dashboard/profile',
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
-    // badge: {
-    //   color: 'info',
-    //   text: 'NEW',
-    // },
-  },
+  // {
+  //   component: CNavItem,
+  //   name: 'Profile',
+  //   to: '/client/dashboard/profile',
+  //   icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  //   // badge: {
+  //   //   color: 'info',
+  //   //   text: 'NEW',
+  //   // },
+  // },
   {
     component: CNavItem,
     name: 'Reports ',
@@ -71,4 +72,19 @@ const _new_nav_client = [
 
 ]
 
-export default _new_nav_client
+const bottomNavItems = [
+  {
+    component: CNavItem,
+    name: 'Profile',
+    to: '/client/dashboard/profile',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Logout',
+    to: '/logout',
+    icon: <CIcon icon={cilExitToApp} customClassName="nav-icon" />,
+  },
+]
+
+export { navigation, bottomNavItems }

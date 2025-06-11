@@ -3,11 +3,14 @@ import { Button, Col, Container, Modal, Row, Spinner, Form } from 'react-bootstr
 import { get, updateReq } from '../../lib/request'
 import sweetAlert from 'sweetalert2'
 import Moment from 'react-moment'
+import { CButton } from '@coreui/react'
+import UpdateLogoModal from '../../components/Modals/UpdateLogo'
+
 export default function Profile() {
   let imgSrc = process.env.Image_Src
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(false)
-  const [showEdit, setShowEdit] = useState(false)
+  // const [showEdit, setShowEdit] = useState(false)
   const [showView, setShowView] = useState(false)
   const [refresh, setRefresh] = useState(false)
   const [formData, setFormData] = useState({
@@ -60,84 +63,160 @@ export default function Profile() {
           <Spinner animation="border" variant="primary" />
         </Container>
       ) : (
-        <Container className="mx-auto d-block shadow rounded p-3">
-          <h4 className="text-center mb-4">Personal Information</h4>
+        <div>
+          <Row className="align-items-center">
+            <Col>
+              <h4 className="mb-0">Profile</h4>
+            </Col>
+            <Col className="text-end">
+              <CButton className="custom-btn" onClick={handleEdit}>
+                Submit
+              </CButton>
+            </Col>
+          </Row>
 
+          <div className="mt-3 px-3 py-3 bg-white custom-form">
           <Row>
             <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Firstname:</b> <span>{data.firstname}</span>
-              </li>
+              <Form.Group>
+                <Form.Label>First Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="firstname"
+                  placeholder="Text"
+                  onChange={(e) => handleChanges(e)}
+                  value={formData?.firstname}
+                />
+              </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Lastname:</b> <span>{data.lastname}</span>
-              </li>
-            </Col>
-
-            <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Email:</b> <span>{data.email}</span>
-              </li>
-            </Col>
-
-            <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Phone:</b> <span>{data.phone}</span>
-              </li>
-            </Col>
-
-            <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Company Name:</b> <span>{data.companyName}</span>
-              </li>
-            </Col>
-
-            <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>User Name:</b> <span>{data.username}</span>
-              </li>
-            </Col>
-
-            <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Driver Permission:</b> <span>{data.isDriverPermission ? 'Yes' : 'No'}</span>
-              </li>
-            </Col>
-
-            <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Status:</b> <span>{data.status}</span>
-              </li>
-            </Col>
-
-            <Col md={6} className="mb-3">
-              <li className="custom-list">
-                <b>Created Date:</b>{' '}
-                <span>
-                  <Moment format="DD/MM/YYYY, hh:mm a">{data?.createdDateTime}</Moment>
-                </span>
-              </li>
-            </Col>
-            <Col md={6} className="mb-3"></Col>
-
-            <Col md={6} className="mb-3">
-              <Button
-                className="btn btn-success w-100 m-1 text-white"
-                onClick={() => setShowView(true)}
-              >
-                View Logo
-              </Button>
+              <Form.Group controlId="lastname">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="lastname"
+                  placeholder="Last Name"
+                  value={formData.lastname}
+                  onChange={(e) => handleChanges(e)}
+                />
+              </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
+              <Form.Group controlId="email">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={(e) => handleChanges(e)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group controlId="phone">
+                <Form.Label>Phone</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="phone"
+                  placeholder="Phone"
+                  value={formData.phone}
+                  onChange={(e) => handleChanges(e)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group controlId="companyName">
+                <Form.Label>Company Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="companyName"
+                  placeholder="Company Name"
+                  value={formData.companyName}
+                  onChange={(e) => handleChanges(e)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group controlId="username">
+                <Form.Label>User Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="username"
+                  placeholder="User Name"
+                  value={formData.username}
+                  onChange={(e) => handleChanges(e)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group controlId="isDriverPermission">
+                <Form.Label>Driver Permission</Form.Label>
+                <Form.Select
+                  className="form-control"
+                  name="isDriverPermission"
+                  value={formData.isDriverPermission}
+                  onChange={(e) => handleChanges(e)}
+                >
+                  <option value="">Select</option>
+                  <option value={true}>Yes</option>
+                  <option value={false}>No</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group controlId="status">
+                <Form.Label>Status</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="status"
+                  placeholder="Status"
+                  value={formData.status}
+                  onChange={(e) => handleChanges(e)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group controlId="createdDateTime">
+                <Form.Label>Created Date</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="createdDateTime"
+                  value={formData.createdDateTime}
+                  readOnly
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group>
+                <Form.Label>Company Logo</Form.Label>
+                <div>
+                  <Button className="border-0 custom-btn" size="small"
+                    onClick={() => setShowView(true)}
+                  >
+                    View Logo
+                  </Button>
+                </div>
+              </Form.Group>
+            </Col>
+            {/* <Col md={6} className="mb-3">
               <Button className="btn btn-primary w-100 m-1" onClick={() => setShowEdit(true)}>
                 Edit Profile
               </Button>
-            </Col>
+            </Col> */}
           </Row>
-        </Container>
+          <UpdateLogoModal
+            show={showView}
+            setShow={setShowView}
+            currentLogoUrl={data.logoUrl}
+            onSave={(file) => {
+              console.log('File selected:', file);
+            }}
+          />
+          </div>
+        </div>
       )}
-      <Modal show={showEdit} onHide={() => setShowEdit(false)}>
+      {/* <Modal show={showEdit} onHide={() => setShowEdit(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Profile</Modal.Title>
         </Modal.Header>
@@ -213,8 +292,8 @@ export default function Profile() {
             Save Changes
           </Button>
         </Modal.Footer>
-      </Modal>
-      <Modal show={showView} onHide={() => setShowView(false)}>
+      </Modal> */}
+      {/* <Modal show={showView} onHide={() => setShowView(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Company Logo</Modal.Title>
         </Modal.Header>
@@ -226,7 +305,7 @@ export default function Profile() {
             Close
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </div>
   )
 }

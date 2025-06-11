@@ -18,7 +18,7 @@ import logo from '../assets/images/Logos/logo.png'
 // sidebar nav config
 // import navigation from '../_nav'
 // my own sidebar
-import navigation from '../_new_nav'
+import {_new_nav, bottomNavItems} from '../_new_nav'
 import UpdateLogoModal from './Modals/UpdateLogo'
 
 const AppSidebar = () => {
@@ -64,13 +64,36 @@ const AppSidebar = () => {
           onClick={() => dispatch({ type: 'set', sidebarShow: false })}
         />
       </CSidebarHeader> */}
+
       <UpdateLogoModal
         show={showLogoModal}
         setShow={setShowLogoModal}
         currentLogoUrl={logoUrl}
         onSave={handleLogoSave}
       />
-      <AppSidebarNav items={navigation} />
+      
+      <div className="flex-grow-1 d-flex flex-column">
+        <AppSidebarNav items={_new_nav} />
+      </div>
+      <div className="border-top">
+        <AppSidebarNav items={bottomNavItems} />
+      </div>
+      <CSidebarFooter className="border-top d-flex flex-column mt-auto">
+          <div className="d-flex flex-row align-items-center">
+            <div className="profile-icon me-2">
+              <p className="mb-0">RR</p>
+            </div>
+            <div>
+              <h6 className="mb-0">Name</h6>
+              <p className="mb-0">email@gmail.com</p>
+            </div>
+          </div>
+        <small className="text-secondary mt-3 d-block">Version 1.0.1</small>
+        {/* <CSidebarToggler
+          onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+        /> */}
+      </CSidebarFooter>
+
       {/* <CSidebarFooter className="border-top d-none d-lg-flex">
         <CSidebarToggler
           onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}

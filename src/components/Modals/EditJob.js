@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Modal, Form, Row, Col, Dropdown, Spinner } from 'react-bootstrap';
 import { get, updateReq } from '../../lib/request';
 import sweetAlert from 'sweetalert2'
+import Select from 'react-select';
 
 function formatDateForInput(date) {
     if (!date) return '';
@@ -10,7 +11,7 @@ function formatDateForInput(date) {
 }
 
 export default function EditJob({ show, handleClose, job, setIsRefresh, isReferesh, role }) {
-    
+
     const [editFormData, setEditFormData] = useState({
         AWB: job.AWB,
         pieces: job.pieces,
@@ -23,7 +24,7 @@ export default function EditJob({ show, handleClose, job, setIsRefresh, isRefere
         status: job.status,
         note: job.note
     });
-    console.log("edit job data",editFormData)
+    console.log("edit job data", editFormData)
     const [serviceTypes, setServiceTypes] = useState([]);
     const [serviceCode, setServiceCode] = useState([]);
     const [dropDownData, setDropDownData] = useState({
@@ -124,13 +125,48 @@ export default function EditJob({ show, handleClose, job, setIsRefresh, isRefere
 
     }, [])
 
+    const serviceTypeOptions =
+        serviceTypes
+            ?.map((serviceType) => ({
+                value: serviceType._id,
+                label: serviceType.text,
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label)) || [];
+
+    const handleServiceTypeChange = (selectedOption) => {
+        setDropDownData({
+            ...dropDownData,
+            serviceType: {
+                text: selectedOption.label,
+                _id: selectedOption.value,
+            },
+        });
+
+    };
+
+    const serviceCodeOptions =
+        serviceCode?.map((code) => ({
+            value: code._id,
+            label: code.text,
+        })).sort((a, b) => a.label.localeCompare(b.label)) || [];
+
+    const handleServiceCodeChange = (selectedOption) => {
+        setDropDownData({
+            ...dropDownData,
+            serviceCode: {
+                _id: selectedOption?.value,
+                text: selectedOption?.label,
+            },
+        });
+    }
+
     return (
         <>
-            <Modal show={show} onHide={handleClose} size="lg">
+            <Modal show={show} onHide={handleClose} size="lg" dialogClassName="custom-modal">
                 <Modal.Header closeButton>
                     <Modal.Title>Edit Job</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className="py-0">
                     <Form>
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridPassword">
@@ -141,7 +177,8 @@ export default function EditJob({ show, handleClose, job, setIsRefresh, isRefere
                                     onChange={handleEditChange}
                                 />
                             </Form.Group>
-
+                        </Row>
+                        <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridPassword">
                                 <Form.Label>Pieces</Form.Label>
                                 <Form.Control type="number" placeholder="Pieces"
@@ -161,10 +198,28 @@ export default function EditJob({ show, handleClose, job, setIsRefresh, isRefere
                                     onChange={handleEditChange}
                                 />
                             </Form.Group>
-
+                        </Row>
+                        <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridPassword">
                                 <Form.Label>Service Type</Form.Label>
-                                <Dropdown data-bs-theme="primary">
+                                <Select
+                                    className="w-100"
+                                    classNamePrefix="custom-select"
+                                    isSearchable
+                                    isLoading={loading}
+                                    options={serviceTypeOptions}
+                                    value={
+                                        dropDownData.serviceType._id
+                                            ? {
+                                                value: dropDownData.serviceType._id,
+                                                label: dropDownData.serviceType.text,
+                                            }
+                                            : null
+                                    }
+                                    onChange={handleServiceTypeChange}
+                                    placeholder="Select Service Type"
+                                />
+                                {/* <Dropdown data-bs-theme="primary">
                                     <Dropdown.Toggle
                                         id="dropdown-button-dark-example1"
                                         variant="secondary"
@@ -182,23 +237,32 @@ export default function EditJob({ show, handleClose, job, setIsRefresh, isRefere
                                         }
 
                                     </Dropdown.Menu>
-                                </Dropdown>
+                                </Dropdown> */}
                             </Form.Group>
                         </Row>
 
-                        <Row className="mb-3">
-                            <Form.Group as={Col} controlId="formGridEmail">
-                                <Form.Label>Customer Reference No</Form.Label>
-                                <Form.Control type="text" placeholder="Enter Customer Reference No"
-                                    value={editFormData.custRefNumber}
-                                    name="custRefNumber"
-                                    onChange={handleEditChange}
-                                />
-                            </Form.Group>
 
+                        <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridPassword">
                                 <Form.Label>Service Code</Form.Label>
-                                <Dropdown data-bs-theme="primary">
+                                <Select
+                                    className="w-100 custom-select"
+                                    classNamePrefix="custom-select"
+                                    options={serviceCodeOptions}
+                                    value={
+                                        dropDownData.serviceCode._id
+                                            ? {
+                                                value: dropDownData.serviceCode._id,
+                                                label: dropDownData.serviceCode.text,
+                                            }
+                                            : null
+                                    }
+                                    onChange={handleServiceCodeChange}
+                                    placeholder="Select Service Code"
+                                    isSearchable
+                                    isLoading={loading2}
+                                />
+                                {/* <Dropdown data-bs-theme="primary">
                                     <Dropdown.Toggle
                                         id="dropdown-button-dark-example1"
                                         variant="secondary"
@@ -215,10 +279,19 @@ export default function EditJob({ show, handleClose, job, setIsRefresh, isRefere
                                             ))
                                         }
                                     </Dropdown.Menu>
-                                </Dropdown>
+                                </Dropdown> */}
                             </Form.Group>
                         </Row>
-
+                        <Row className="mb-3">
+                            <Form.Group as={Col} controlId="formGridEmail">
+                                <Form.Label>Customer Reference No</Form.Label>
+                                <Form.Control type="text" placeholder="Enter Customer Reference No"
+                                    value={editFormData.custRefNumber}
+                                    name="custRefNumber"
+                                    onChange={handleEditChange}
+                                />
+                            </Form.Group>
+                        </Row>
                         {/* <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridEmail">
                                 <Form.Label>Ready Time</Form.Label>
@@ -268,8 +341,8 @@ export default function EditJob({ show, handleClose, job, setIsRefresh, isRefere
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className="btn btn-primary" onClick={handleSave}>Save</button>
-                    <button className="btn btn-secondary" onClick={handleClose}>Close</button>
+                    <button className="btn btn-primary" onClick={handleSave}>Confirm Change</button>
+                    {/* <button className="btn btn-secondary" onClick={handleClose}>Close</button> */}
                 </Modal.Footer>
 
             </Modal>

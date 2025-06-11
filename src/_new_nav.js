@@ -26,7 +26,8 @@ import {
   cilTask,
   cilStorage,
   cilLocationPin,
-  cilSpreadsheet
+  cilSpreadsheet,
+  cilExitToApp
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -141,4 +142,14 @@ const _new_nav = [
   // },
 ]
 
-export default _new_nav
+const bottomNavItems = [
+  {
+    component: CNavItem,
+    name: 'Logout',
+    to: '/logout',
+    icon: <CIcon icon={cilExitToApp} customClassName="nav-icon" />,
+  }
+]
+
+
+export {_new_nav,bottomNavItems}

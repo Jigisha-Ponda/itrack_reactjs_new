@@ -46,6 +46,7 @@ const SearchBar = ({ onSearch, role, searchQuery, setSearchQuery }) => {
   };
 
   const handleSearchClick = (searchTerm, selectedOption) => {
+    console.log('clicked');
     getSeachFilterResult(searchQuery, role)
       .then((res) => {
         onSearch(res);
@@ -87,6 +88,17 @@ const SearchBar = ({ onSearch, role, searchQuery, setSearchQuery }) => {
           <FaSearch style={{ color: '#0d6efd' }}/>
         </Button>
       </InputGroup>
+      {/* <InputGroup>
+        <Form.Control
+          type="text"
+          placeholder="Enter Job Id or AWB"
+          value={searchTerm}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
+        <Button variant="dark" onClick={handleShow} className="input-group-text cursor-pointer">
+          <FaFilter />
+        </Button>
+      </InputGroup> */}
 
       <FilterOffCanvas
         show={show}
@@ -98,6 +110,7 @@ const SearchBar = ({ onSearch, role, searchQuery, setSearchQuery }) => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
+      
     </Form>
   );
 };

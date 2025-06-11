@@ -98,6 +98,8 @@ const AppHeader = () => {
       jobId: '',
       clientName: '',
       driverName: '',
+      serviceType:'',
+      serviceCode:''
     })
   }
 
@@ -142,7 +144,7 @@ const AppHeader = () => {
       />
         <CHeaderNav className="w-50 w-lg-100">
           <SearchBar
-            onSearch={onSearch}
+            onSearch={(results) => setSearchResults(results)}
             role="admin"
             handleClear={handleClear}
             searchQuery={searchQuery}

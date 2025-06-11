@@ -90,26 +90,29 @@ export default function DateRangeFilter({
             style={{ width: 170 }}
           />
         </div>
-        <div>
-          <Select
-            options={columnOptions}
-            value={selectedColumn}
-            onChange={handleColumnSelect}
-            placeholder="Show only chosen columns"
-            isSearchable
-          />
-          {/* <DropdownButton
-            id="chosen-column-dropdown"
-            title={selectedColumn}
-            onSelect={handleSelect}
-            variant="outline-primary"
-          >
-            <Dropdown.Item eventKey="Job ID">Job ID</Dropdown.Item>
-            <Dropdown.Item eventKey="AWB">AWB</Dropdown.Item>
-            <Dropdown.Item eventKey="Client Name">Client Name</Dropdown.Item>
-            <Dropdown.Item eventKey="Driver Name">Driver Name</Dropdown.Item>
-          </DropdownButton> */}
-        </div>
+        {role == 'admin' &&
+          <div>
+            <Select
+              options={columnOptions}
+              value={selectedColumn}
+              onChange={handleColumnSelect}
+              placeholder="Show only chosen columns"
+              isSearchable
+            />
+            {/* <DropdownButton
+          id="chosen-column-dropdown"
+          title={selectedColumn}
+          onSelect={handleSelect}
+          variant="outline-primary"
+        >
+          <Dropdown.Item eventKey="Job ID">Job ID</Dropdown.Item>
+          <Dropdown.Item eventKey="AWB">AWB</Dropdown.Item>
+          <Dropdown.Item eventKey="Client Name">Client Name</Dropdown.Item>
+          <Dropdown.Item eventKey="Driver Name">Driver Name</Dropdown.Item>
+        </DropdownButton> */}
+          </div>
+        }
+
 
       </div>
     </>
