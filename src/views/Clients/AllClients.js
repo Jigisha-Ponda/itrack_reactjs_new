@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Container, Form, Modal, Pagination, Row, Table, Spinner, Image } from 'react-bootstrap'
+import { Button, Col, Container, Form, Modal, Pagination, Row, Table, Spinner, Image, Tabs, Tab } from 'react-bootstrap'
 import {
   FaBoxOpen,
   FaEye,
@@ -8,13 +8,16 @@ import {
   FaSearch,
   FaTruckMoving,
   FaPlusCircle,
-  FaArrowRight
+  FaArrowRight,
+  FaSyncAlt,
+  FaFilter
 } from 'react-icons/fa'
 import { CButton } from '@coreui/react'
+import DateRangeFilter from '../../components/DateRangeFilter'
 import { RiDeleteBin5Line } from 'react-icons/ri'
 import { IoMdAdd } from 'react-icons/io'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useColorModes } from '@coreui/react'
 import { get, deleteReq } from '../../lib/request'
 import { getAdminToken } from '../../lib/getTokens'
@@ -23,6 +26,10 @@ import { getTotalDocs } from '../../services/getTotalDocs'
 import sweetAlert from 'sweetalert2'
 import Moment from 'react-moment'
 import { BsThreeDotsVertical } from 'react-icons/bs'
+import sortData from '../../services/sortData'
+import getStatusStyles from '../../services/getStatusColor'
+import { getFormattedDAndT, getLocalDateAndTime, convertToMelbourneFormat } from '../../lib/getFormatedDate'
+import FilterOffCanvas from '../../components/Filter'
 
 function AllClients() {
   let imgSrc = process.env.Image_Src
@@ -33,18 +40,62 @@ function AllClients() {
   const [loading, setLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
   const [isReferesh, setIsRefresh] = useState(false)
+  const [data, setData] = useState([])
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10)
   const [totalDocs, setTotalDocs] = useState(0)
+  const [activeTab, setActiveTab] = useState('allClients')
+  const [message, setMessage] = useState('')
+  const [selectedItem, setSelectedItem] = useState(location.state?.selectedItem || {})
+  const searchQuery = useSelector((state) => state.searchQuery)
+  const handleShow = () => setShowCanvas(true);
+  const [showCanvas, setShowCanvas] = useState(false)
+  const dispatch = useDispatch()
 
+  const tabLabels = {
+    allClients: 'All Clients',
+    invoices: 'Invoices',
+  };
   const handleShowModal = (client) => {
     setSelectedClient(client)
     setShowModal(true)
   }
 
+  // handle sort
+  const handleSort = (field) => {
+    const sortedData = sortData(data, field)
+    setData(sortedData)
+  }
+
+  const handleCloseCanvas = () => setShowCanvas(false)
+
   const handleCloseModal = () => {
     setShowModal(false)
+  }
+  const setSearchQuery = (query) => {
+    dispatch({
+      type: 'updateSearchQuery',
+      payload: query,
+    })
+  }
+
+  const handleClear = () => {
+    setMessage('')
+    setIsRefresh(!isReferesh)
+    setSearchQuery({
+      AWB: '',
+      clientId: '',
+      driverId: '',
+      fromDate: '',
+      toDate: '',
+      currentStatus: '',
+      jobId: '',
+      clientName: '',
+      driverName: '',
+      serviceType: '',
+      serviceCode: ''
+    })
   }
   // Deleting the client
   const handleDelete = (Id) => {
@@ -97,6 +148,27 @@ function AllClients() {
   }, [isReferesh, page, limit])
 
   useEffect(() => {
+    setLoading(true)
+    console.log(searchQuery.toDate);
+    console.log(searchQuery.fromDate);
+    setMessage('')
+    if (
+      searchQuery.currentStatus ||
+      searchQuery.clientId ||
+      searchQuery.driverId ||
+      searchQuery.fromDate ||
+      searchQuery.toDate ||
+      searchQuery.jobId ||
+      searchQuery.clientName ||
+      searchQuery.driverName
+    ) {
+      setLoading(false)
+
+    } else {
+      getInitialData()
+    }
+  }, [page, limit, isReferesh])
+  useEffect(() => {
     getTotalDocs("CLIENT", "admin").then((data) => {
       setTotalDocs(data);
       setTotalPages(Math.ceil(data / limit))
@@ -106,48 +178,109 @@ function AllClients() {
   }
     , [isReferesh])
 
+  // get invoice data
+  const getInitialData = () => {
+    get(`/admin/invoice`, 'admin')
+      .then((response) => {
+        if (response && response.length > 0) {
+          setData(response);
+        } else {
+          setData([]); // Empty state
+          setMessage('No Data Found');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setData([]); // Reset data
+        setMessage('No Data Found');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
 
+  const handleTabSelect = (selectedTab) => {
+    setActiveTab(selectedTab);
+  };
+  
+  const handleRefresh = () => {
+    setLoading(true)
+    setMessage('')
+
+    let queryParams = []
+
+    if (searchQuery.currentStatus)
+      queryParams.push(`currentStatus=${searchQuery.currentStatus}`)
+    if (searchQuery.clientId) queryParams.push(`clientId=${searchQuery.clientId}`)
+    if (searchQuery.driverId) queryParams.push(`driverId=${searchQuery.driverId}`)
+    if (searchQuery.fromDate) queryParams.push(`fromDate=${searchQuery.fromDate}`)
+    if (searchQuery.toDate) queryParams.push(`toDate=${searchQuery.toDate}`)
+    if (searchQuery.jobId) queryParams.push(`jobId=${searchQuery.jobId}`)
+    if (searchQuery.clientName) queryParams.push(`clientName=${searchQuery.clientName}`)
+    if (searchQuery.driverName) queryParams.push(`driverName=${searchQuery.driverName}`)
+
+    const query = queryParams.join('&')
+
+    get(`/admin/info/jobFilter?${query}`, 'admin')
+      .then((response) => {
+        if (response?.data?.status) {
+          if (response?.data?.data?.length === 0) {
+            setMessage('No data found')
+          }
+          setData(response?.data?.data)
+          setLoading(false)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        setLoading(false)
+      })
+  }
   return (
     <>
       <Row className="align-items-center">
         <Col>
-          <h4 className="mb-0">All Clients</h4>
+          <h4 className="mb-0">{tabLabels[activeTab]}</h4>
         </Col>
-        <Col className="text-end">
-          <CButton className="custom-btn" onClick={() => navigate('/client/add')} >
-            Add Client
-            <FaArrowRight size={12} className="ms-2" />
-          </CButton>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={12}>
-          <div>
-            {/* <Row className="mb-3 justify-content-between">
-              <Col md={8} className="d-flex align-items-center gap-2 ">
-                Show
-                <Col md={2}>
-                  <Form.Select
-                    value={limit}
-                    onChange={handleLimitChange}
-                  >
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={30}>30</option>
-                  </Form.Select>
-                </Col>
-                Entries
+        {tabLabels[activeTab] === 'All Clients' ?
+          (<Col className="text-end">
+            <CButton className="custom-btn" onClick={() => navigate('/client/add')} >
+              Add Client
+              <FaArrowRight size={12} className="ms-2" />
+            </CButton>
+          </Col>) : (<Col md={10} className="d-flex flex-wrap justify-content-start justify-content-md-end align-items-center gap-3 mt-3 mt-md-0">
+            <Button
+              variant="dark"
+              className="input-group-text cursor-pointer custom-icon-btn"
+              onClick={handleRefresh}
+            >
+              <FaSyncAlt />
+            </Button>
+            <DateRangeFilter
+              setData={setData}
+              role="admin"
+              setMessage={setMessage}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+            <Button onClick={handleShow} className="input-group-text cursor-pointer custom-icon-btn">
+              <FaFilter />
+            </Button>
+            <Button onClick={handleClear} style={{ fontSize: '12px' }} className="custom-btn">
+              Clear Filters
+            </Button>
+          </Col>)
+        }
 
-              </Col>
-              <Col className="d-flex align-items-center justify-content-end">
-                <Button onClick={() => navigate('/client/add')} variant="primary">
-                  {' '}
-                  <IoMdAdd /> Add Client
-                </Button>
-              </Col>
-            </Row> */}
+
+      </Row>
+      {/* Edited */}
+      <Tabs activeKey={activeTab} onSelect={handleTabSelect} id="job-tabs" className="mb-3 custom-tabs">
+        {/* Job Details */}
+        <Tab eventKey="allClients" title="All Clients">
+          <>
             <div className="client-rates-table">
-              <Table className="custom-table mt-3 table-bordered" responsive hover>
+              <Table className="custom-table table-bordered" responsive hover>
                 <thead>
                   <tr>
                     {/* <th className="text-center px-4">#</th> */}
@@ -268,10 +401,189 @@ function AllClients() {
                 />
               </Col>
             </Row>
+          </>
+        </Tab>
+
+        {/* Invoices */}
+        <Tab eventKey="invoices" title="Invoices" className="client-rates-table">
+          <div className="table-responsive">
+            <Table responsive hover bordered>
+              <thead>
+                <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                  <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
+                    Client
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('pickUpDetails.readyTime')} >
+                    Ready Time
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.cutOffTime')}>
+                    Cutoff Time
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('AWB')}>
+                    AWB
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('pieces')}>
+                    Pieces
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('serviceTypeId.text')}>
+                    Service Type
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('serviceCodeId.text')}>
+                    Service Code
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')}>
+                    Pickup From
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')}>
+                    Deliver To
+                  </th>
+                  {/* <th className="text-center">
+                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
+                    Job ID
+                  </th> */}
+                  <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
+                    Driver
+                  </th>
+                  <th className="text-center" onClick={() => handleSort('rates')}>
+                    Rates
+                  </th>
+                  <th className="text-center" style={{ width: 'auto', minWidth: '100px' }} onClick={() => handleSort('is_invoices')}>
+                    Invoiced
+                  </th>
+                  <th className="text-center" style={{ width: 'auto', minWidth: 'auto' }}>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {message ? (
+                  <tr>
+                    <td colSpan={14} className="text-center text-danger">{message}</td>
+                  </tr>
+                ) : loading ? (
+                  <tr>
+                    <td colSpan={14} className="text-center"><Spinner animation="border" variant="primary" /></td>
+                  </tr>
+                ) : (
+                  data && data.map((item, index) => {
+                    const isSelected = item._id === selectedItem._id;
+                    const status = item?.isHold ? 'Hold' : item?.currentStatus;
+                    const styles = getStatusStyles(status);
+
+                    const tdStyle = {
+                      backgroundColor: isSelected ? '#E0E0E0' : 'transparent',
+                      fontSize: 13,
+                      textAlign: 'left',
+                    };
+
+                    return (
+                      <tr key={index} className="cursor-pointer">
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.clientId?.companyName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.pickUpDetails?.readyTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {getFormattedDAndT(item?.dropOfDetails?.cutOffTime)}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.AWB}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pieces}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceTypeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.serviceCodeId?.text}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.pickUpDetails?.pickupLocationId?.customName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.dropOfDetails?.dropOfLocationId?.customName}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.driverId ? `${item.driverId.firstname}-${item.driverId.lastname}` : ''}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.rates != null ? item.rates : '—'}
+                        </td>
+                        <td onClick={() => handleView(item)} style={tdStyle}>
+                          {item?.is_invoices === true ? 'Yes' : 'No'}
+                        </td>
+                        <td className="text-center action-dropdown-menu" style={tdStyle}>
+                          <div className="dropdown">
+                            <button
+                              className="btn btn-link p-0 border-0"
+                              type="button"
+                              id={`dropdownMenuButton-${item._id}`}
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              <BsThreeDotsVertical size={18} />
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby={`dropdownMenuButton-${item._id}`}>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => navigate(`/client/invoice/${item._id}`)}
+                                >
+                                  View Details
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => navigate(`/client/job/details/${item._id}`)}
+                                >
+                                  Add Manual Pricing
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </Table>
+          </div>
+        </Tab>
+      </Tabs>
+      <Row>
+        <Col md={12}>
+          <div>
+            {/* <Row className="mb-3 justify-content-between">
+              <Col md={8} className="d-flex align-items-center gap-2 ">
+                Show
+                <Col md={2}>
+                  <Form.Select
+                    value={limit}
+                    onChange={handleLimitChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={30}>30</option>
+                  </Form.Select>
+                </Col>
+                Entries
+
+              </Col>
+              <Col className="d-flex align-items-center justify-content-end">
+                <Button onClick={() => navigate('/client/add')} variant="primary">
+                  {' '}
+                  <IoMdAdd /> Add Client
+                </Button>
+              </Col>
+            </Row> */}
+
           </div>
         </Col>
         {/* Modal for showing details */}
-        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }}>
+        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }} dialogClassName="custom-modal">
           <Modal.Header closeButton>
             <Modal.Title>Client Details</Modal.Title>
           </Modal.Header>
@@ -315,6 +627,17 @@ function AllClients() {
           </Modal.Footer>
         </Modal>
       </Row >
+      <FilterOffCanvas
+        show={showCanvas}
+        handleClose={handleCloseCanvas}
+        onApplyFilter={(selectedOption) =>
+          handleSearchClick(searchTerm, selectedOption)
+        }
+        role="admin"
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+
     </>
   )
 }

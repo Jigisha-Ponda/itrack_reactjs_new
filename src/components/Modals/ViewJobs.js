@@ -3,7 +3,7 @@ import { getFormattedDAndT } from '../../lib/getFormatedDate';
 export default function ViewJobs({ show, handleClose, job }) {
     return (
         <>
-            <Modal show={show} onHide={handleClose} size='lg'>
+            <Modal show={show} onHide={handleClose} size='lg' dialogClassName="custom-modal">
                 <Modal.Header closeButton>
                     <Modal.Title>View Job</Modal.Title>
                 </Modal.Header>

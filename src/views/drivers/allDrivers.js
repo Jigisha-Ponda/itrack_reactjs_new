@@ -262,7 +262,7 @@ const AllDrivers = () => {
           </div>
         </Col>
       </Row>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} dialogClassName="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Driver Details</Modal.Title>
         </Modal.Header>

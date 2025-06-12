@@ -278,7 +278,7 @@ function AllClientsJob() {
           </div>
         </Col>
         {/* Modal for showing details */}
-        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }}>
+        <Modal show={showModal} onHide={handleCloseModal} style={{ marginTop: '10vh' }} dialogClassName="custom-modal">
           <Modal.Header closeButton>
             <Modal.Title>Client Details</Modal.Title>
           </Modal.Header>

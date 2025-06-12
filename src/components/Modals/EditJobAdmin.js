@@ -171,7 +171,7 @@ export default function EditJobAdmin({ job, setIsRefresh, isReferesh }) {
         Edit Job
       </Button>
 
-      <Modal show={show} onHide={handleClose} size="xl" style={{ fontSize: '12px' }}>
+      <Modal show={show} onHide={handleClose} size="xl" style={{ fontSize: '12px' }} dialogClassName="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Edit Job</Modal.Title>
         </Modal.Header>

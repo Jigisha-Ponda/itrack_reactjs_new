@@ -291,7 +291,7 @@ function EditClient() {
           </Container>
 
       }
-      <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal show={showModal} onHide={handleCloseModal} dialogClassName="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Company Logo</Modal.Title>
         </Modal.Header>
@@ -339,7 +339,7 @@ function EditClient() {
       </Modal>
       {/* Modal for password */}
 
-      <Modal show={showPasswordModal} onHide={handleClosePasswordModal}>
+      <Modal show={showPasswordModal} onHide={handleClosePasswordModal} dialogClassName="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Reset Password </Modal.Title>
         </Modal.Header>

@@ -64,6 +64,7 @@ const AllClientsJob = React.lazy(() => import('./views/Clients/AllClientsJob.js'
 const EditDriver = React.lazy(() => import('./views/drivers/EditDriver.js'))
 const AllDriverJobs = React.lazy(() => import('./views/drivers/allDriverJobs.js'))
 const ClientJobDetails = React.lazy(() => import('./views/Clients/ClientJobDetails.js'))
+const ClientInvoice = React.lazy(() => import('./views/Clients/ClientInvoice.js'))
 const AddClientJOb = React.lazy(() => import('./views/Clients/AddClientJob.js'))
 const AllPickupLocation = React.lazy(() => import('./views/PickUPLocation/AllPickLocation.js'))
 const AllDropLocation = React.lazy(() => import('./views/DropLocation/AllDropLocation.js'));
@@ -89,6 +90,7 @@ const routes = [
   { path: '/driver/all', name: 'All Drivers', element: AllDrivers },
   { path: '/driver/jobs/:id', name: 'All Driver Jobs', element: AllDriverJobs },
   { path: '/client/job/details/:id', name: 'Client Job Details', element: ClientJobDetails },
+  { path: '/client/invoice/:id', name: 'Client Invoice', element: ClientInvoice },
   { path: '/location/pickup', name: 'Pickup Location', element: AllPickupLocation },
   { path: '/location/drop', name: 'Drop Location', element: AllDropLocation },
   { path: '/reports/stats', name: 'Report', element: Report },

@@ -681,7 +681,7 @@ const JobDetails = () => {
 
           
           </div> */}
-          <Modal show={showAttachment} onHide={handleAttachmentClose}>
+          <Modal show={showAttachment} onHide={handleAttachmentClose} dialogClassName="custom-modal">
             <Modal.Header className="border-0 text-center w-100">
               <Modal.Title className="w-100">
                 {' '}

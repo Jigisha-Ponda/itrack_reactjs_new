@@ -40,7 +40,7 @@ export default function ChangeAttchment({ id, isRefresh, setIsRefresh }) {
             <Button variant='primary' className='rounded-2 text-white fs-6 m-2'
                 onClick={handleShow}
             >Change Attachment </Button>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} dialogClassName="custom-modal">
                 <Modal.Header closeButton>
                     <Modal.Title>Change Attachment</Modal.Title>
                 </Modal.Header>

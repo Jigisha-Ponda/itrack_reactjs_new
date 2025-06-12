@@ -10,7 +10,7 @@ const MyPagination = ({ totalPages, currentPage, onPageChange }) => {
 
   const renderPageNumbers = () => {
     const pageItems = [];
-    const pageLimit = 5; // How many page numbers to show (excluding first/last)
+    const pageLimit = 5;
 
     let startPage = Math.max(currentPage - Math.floor(pageLimit / 2), 1);
     let endPage = startPage + pageLimit - 1;

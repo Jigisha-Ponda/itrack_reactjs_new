@@ -228,7 +228,7 @@ function EditDriver() {
         </Row> */}
       </Container>
       {/* password reset modal */}
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} dialogClassName="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Reset Password</Modal.Title>
         </Modal.Header>
@@ -259,7 +259,7 @@ function EditDriver() {
       </Modal>
       {/* image update modal */}
 
-      <Modal show={showImage} onHide={handleImageClose}>
+      <Modal show={showImage} onHide={handleImageClose} dialogClassName="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Driver Image</Modal.Title>
         </Modal.Header>

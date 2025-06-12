@@ -3,6 +3,7 @@ import { Row, Col, Form, Dropdown, DropdownButton } from 'react-bootstrap'
 import { getSeachFilterResult } from '../services/getSearchFilterResult'
 import Select from 'react-select';
 import FilterOffCanvas from './Filter';
+import { BsCheck } from 'react-icons/bs';
 
 export default function DateRangeFilter({
   setData,
@@ -27,8 +28,8 @@ export default function DateRangeFilter({
   const handleTimeChange = (e) => {
     setSearchQuery({ ...searchQuery, [e.target.name]: e.target.value })
   }
-  const handleColumnSelect = (option) => {
-    setSelectedColumn(option)
+  const handleColumnSelect = (options) => {
+    setSelectedColumns(options || []);
     // If you want to filter data by selected column:
     // setSearchQuery({ ...searchQuery, selectedColumn: option.value })
   }
@@ -44,22 +45,36 @@ export default function DateRangeFilter({
     }
   }, [searchQuery])
 
-  const [selectedColumn, setSelectedColumn] = useState('Select Column');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedColumns, setSelectedColumns] = useState([]);
+
+  const toggleColumn = (col) => {
+    if (selectedColumns.includes(col)) {
+      setSelectedColumns(selectedColumns.filter(c => c !== col));
+    } else {
+      setSelectedColumns([...selectedColumns, col]);
+    }
+  };
+  // const columnOptions = [
+  //   { value: 'all', label: 'All' },
+  //   { value: 'client', label: 'Client' },
+  //   { value: 'readyTime', label: 'Ready Time' },
+  //   { value: 'cutoffTime', label: 'Cutoff Time' },
+  //   { value: 'awb', label: 'AWB' },
+  //   { value: 'pieces', label: 'Pieces' },
+  //   { value: 'serviceType', label: 'Service Type' },
+  //   { value: 'serviceCode', label: 'Service Code' },
+  //   { value: 'pickupFrom', label: 'Pickup From' },
+  //   { value: 'deliveryTo', label: 'Delivery To' },
+  //   { value: 'driver', label: 'Driver' },
+  //   { value: 'notes', label: 'Notes' },
+  //   { value: 'status', label: 'Status' },
+  // ]
   const columnOptions = [
-    { value: 'all', label: 'All' },
-    { value: 'client', label: 'Client' },
-    { value: 'readyTime', label: 'Ready Time' },
-    { value: 'cutoffTime', label: 'Cutoff Time' },
-    { value: 'awb', label: 'AWB' },
-    { value: 'pieces', label: 'Pieces' },
-    { value: 'serviceType', label: 'Service Type' },
-    { value: 'serviceCode', label: 'Service Code' },
-    { value: 'pickupFrom', label: 'Pickup From' },
-    { value: 'deliveryTo', label: 'Delivery To' },
-    { value: 'driver', label: 'Driver' },
-    { value: 'notes', label: 'Notes' },
-    { value: 'status', label: 'Status' },
-  ]
+    'All', 'Client', 'Ready Time', 'Cutoff Time', 'AWB', 'Pieces',
+    'Service Type', 'Service Code', 'Pickup From', 'Deliver To',
+    'Driver', 'Notes', 'Status'
+  ];
 
   return (
     <>
@@ -92,24 +107,30 @@ export default function DateRangeFilter({
         </div>
         {role == 'admin' &&
           <div>
-            <Select
-              options={columnOptions}
-              value={selectedColumn}
-              onChange={handleColumnSelect}
-              placeholder="Show only chosen columns"
-              isSearchable
-            />
-            {/* <DropdownButton
-          id="chosen-column-dropdown"
-          title={selectedColumn}
-          onSelect={handleSelect}
-          variant="outline-primary"
-        >
-          <Dropdown.Item eventKey="Job ID">Job ID</Dropdown.Item>
-          <Dropdown.Item eventKey="AWB">AWB</Dropdown.Item>
-          <Dropdown.Item eventKey="Client Name">Client Name</Dropdown.Item>
-          <Dropdown.Item eventKey="Driver Name">Driver Name</Dropdown.Item>
-        </DropdownButton> */}
+            <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="w-100 custom-dropdown">
+              <Dropdown.Toggle
+                className="form-control bg-white text-start"
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                Show only chosen columns
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className="w-100">
+                {columnOptions.map((col, idx) => (
+                  <Dropdown.Item
+                    key={idx}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleColumn(col);
+                    }}
+                    className="d-flex justify-content-between align-items-center"
+                  >
+                    {col}
+                    {selectedColumns.includes(col) && <BsCheck />}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         }
 

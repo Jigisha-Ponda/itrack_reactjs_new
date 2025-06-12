@@ -63,7 +63,7 @@ export default function AddLocation({ type, refetch }) {
                 className=' fw-bold text-success text-bg-light'
             > Add New {type} Location</Dropdown.Item>
 
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} dialogClassName="custom-modal">
                 <Modal.Header closeButton>
                     <Modal.Title>Add {type} Location</Modal.Title>
                 </Modal.Header>

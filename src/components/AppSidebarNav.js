@@ -53,7 +53,6 @@ export const AppSidebarNav = ({ items }) => {
   const navItem = (item, index, indent = false) => {
     const { component, name, badge, icon, to, ...rest } = item
     const isLogout = name?.toLowerCase() === 'logout'
-    console.log('is logout', isLogout);
     const Component = component
     return (
       <Component as="div" key={index}>

@@ -16,7 +16,7 @@ export default function ViewDriverUploads({ captures, Rname, RSign }) {
       <Button variant="primary" className="rounded-2 text-white fs-6 m-2 custom-btn" onClick={handleShow}>
         View Driver Uploads{' '}
       </Button>
-      <Modal show={show} onHide={handleClose} size="lg">
+      <Modal show={show} onHide={handleClose} size="lg" dialogClassName="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>Driver Uploads</Modal.Title>
         </Modal.Header>

@@ -74,7 +74,6 @@ export default function ClientJobDetails() {
     driverAttachments: 'Driver Attachments',
     pickupDetails: 'Pickup Details',
     dropDetails: 'Drop Details',
-    invoices: 'Invoices',
   };
   useEffect(() => {
     setLoading(true)
@@ -726,158 +725,9 @@ export default function ClientJobDetails() {
                 </ul>
               </>
             </Tab>
-
-            {/* Invoices */}
-            <Tab eventKey="invoices" title="Invoices" className="client-rates-table">
-              <div className="table-responsive">
-                <Table responsive hover bordered>
-                  <thead>
-                    <tr style={{ fontSize: 13, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-                      <th className="text-center" onClick={() => handleSort('clientId.companyName')}>
-                        Client
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('pickUpDetails.readyTime')} >
-                        Ready Time
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('dropOfDetails.cutOffTime')}>
-                        Cutoff Time
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('AWB')}>
-                        AWB
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('pieces')}>
-                        Pieces
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('serviceTypeId.text')}>
-                        Service Type
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('serviceCodeId.text')}>
-                        Service Code
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('pickUpDetails.pickupLocationId.customName')}>
-                        Pickup From
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('dropOfDetails.dropOfLocationId.customName')}>
-                        Deliver To
-                      </th>
-                      {/* <th className="text-center">
-                    <LuChevronDown className="cursor-pointer m-1" size={20} onClick={() => handleSort('uid')} />
-                    Job ID
-                  </th> */}
-                      <th className="text-center" onClick={() => handleSort('driverId.firstname')}>
-                        Driver
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('rates')}>
-                        Rates
-                      </th>
-                      <th className="text-center" onClick={() => handleSort('is_invoices')}>
-                        Invoiced
-                      </th>
-                      <th className="text-center" colSpan={2}>Actions</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {message ? (
-                      <tr>
-                        <td colSpan={14} className="text-center text-danger">{message}</td>
-                      </tr>
-                    ) : loading ? (
-                      <tr>
-                        <td colSpan={14} className="text-center"><Spinner animation="border" variant="primary" /></td>
-                      </tr>
-                    ) : (
-                      data && data.map((item, index) => {
-                        const isSelected = item._id === selectedItem._id;
-                        const status = item?.isHold ? 'Hold' : item?.currentStatus;
-                        const styles = getStatusStyles(status);
-
-                        const tdStyle = {
-                          backgroundColor: isSelected ? '#E0E0E0' : 'transparent',
-                          fontSize: 13,
-                          textAlign: 'left',
-                        };
-
-                        return (
-                          <tr key={index} className="cursor-pointer">
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.clientId?.companyName}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {getFormattedDAndT(item?.pickUpDetails?.readyTime)}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {getFormattedDAndT(item?.dropOfDetails?.cutOffTime)}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.AWB}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.pieces}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.serviceTypeId?.text}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.serviceCodeId?.text}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.pickUpDetails?.pickupLocationId?.customName}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.dropOfDetails?.dropOfLocationId?.customName}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.driverId ? `${item.driverId.firstname}-${item.driverId.lastname}` : ''}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.rates != null ? item.rates : '—'}
-                            </td>
-                            <td onClick={() => handleView(item)} style={tdStyle}>
-                              {item?.is_invoices === true ? 'Yes' : 'No'}
-                            </td>
-                            <td className="text-center action-dropdown-menu" style={tdStyle}>
-                              <div className="dropdown">
-                                <button
-                                  className="btn btn-link p-0 border-0"
-                                  type="button"
-                                  id={`dropdownMenuButton-${item._id}`}
-                                  data-bs-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  <BsThreeDotsVertical size={18} />
-                                </button>
-                                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby={`dropdownMenuButton-${item._id}`}>
-                                  <li>
-                                    <button
-                                      className="dropdown-item"
-                                      onClick={() => setActiveTab('jobDetails')}
-                                    >
-                                      View Details
-                                    </button>
-                                  </li>
-                                  <li>
-                                    <button
-                                      className="dropdown-item"
-                                      onClick={() => setActiveTab('jobDetails')}
-                                    >
-                                      Add Manual Pricing
-                                    </button>
-                                  </li>
-                                </ul>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </Table>
-              </div>
-            </Tab>
           </Tabs>
 
-          <Modal show={show} onHide={handleClose}>
+          <Modal show={show} onHide={handleClose} dialogClassName="custom-modal">
             <Modal.Header className="border-0 text-center w-100">
               <Modal.Title className="w-100">
                 {' '}
@@ -911,7 +761,7 @@ export default function ClientJobDetails() {
               </Button>
             </Modal.Footer>
           </Modal>
-          <Modal show={showAttachment} onHide={handleAttachmentClose}>
+          <Modal show={showAttachment} onHide={handleAttachmentClose} dialogClassName="custom-modal">
             <Modal.Header className="border-0 text-center w-100">
               <Modal.Title className="w-100">
                 {' '}

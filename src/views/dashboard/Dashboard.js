@@ -55,12 +55,15 @@ const Dashboard = () => {
   };
 
   const handleRemoveFilter = (key) => {
-    const updatedQuery = { ...searchQuery };
+    console.log(key);
+    // const updatedQuery = { ...searchQuery };
+    const updatedQuery = { ...searchQuery, [key]: '' };
     delete updatedQuery[key];
 
     // Also remove IDs linked with names
     if (key === 'clientName') delete updatedQuery.clientId;
     if (key === 'driverName') delete updatedQuery.driverId;
+    if (key === 'currentStatus') delete updatedQuery.currentStatus;
 
     setSearchQuery(updatedQuery);
   };

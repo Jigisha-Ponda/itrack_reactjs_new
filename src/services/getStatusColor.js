@@ -1,27 +1,25 @@
 const getStatusStyles = (status) => {
     switch (status) {
         case 'Pending':
-            return { color: '#FFA500', backgroundColor: '#FFF5E5' }; // Orange
+            return { color: '#F47C13', backgroundColor: '#FFF2DA' }; 
         case 'Driver Assigned':
-            return { color: '#0000FF', backgroundColor: '#E5F2FF' }; // Blue
+            return { color: '#C716B5', backgroundColor: '#FFD0FA' }; 
         case 'Arrival on Pickup':
-            return { color: '#8A2BE2', backgroundColor: '#F3E5FF' }; // Purple
+            return { color: '#AA3AEB', backgroundColor: '#EED0FF' }; 
         case 'Picked Up':
-            return { color: '#1E90FF', backgroundColor: '#E5F0FF' }; // Dodger Blue
+            return { color: '#11808C', backgroundColor: '#A8ECFF' }; 
         case 'Arrival on Delivery':
-            return { color: '#FFD700', backgroundColor: '#FFFBE5' }; // Gold
+            return { color: '#443FE2', backgroundColor: '#D2D0FF' }; 
         case 'Delivered':
-            return { color: '#1F9254', backgroundColor: '#EBF9F1' }; // Green (Original)
+            return { color: '#29A93D', backgroundColor: '#BAFFC5' }; 
         case 'Halt':
             return { color: '#FF4500', backgroundColor: '#FFE5E5' }; // Orange Red
         case 'Cancelled':
-            return { color: '#FF0000', backgroundColor: '#FFE5E5' }; // Red  
+            return { color: '#E92C2C', backgroundColor: '#FFDADA' }; 
         case 'Cancelling':
-            // orange light
-            return { color: '#FFA500', backgroundColor: '#FFF5E5' }; // Orange
+            return { color: '#FEA33C', backgroundColor: '#FFF6DA' }; 
         case 'Hold':
-            // yellow light
-            return { color: '#FFD700', backgroundColor: '#FFFBE5' }; // Gold
+            return { color: '#F39428', backgroundColor: '#FFE4D5' }; 
         default:
             return { color: '#000000', backgroundColor: '#FFFFFF' }; // Default Black on White
     }
