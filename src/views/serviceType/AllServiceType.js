@@ -167,7 +167,7 @@ function AllServiceType() {
                   <th className="text-start px-4" style={{ width: 'auto', minWidth: '50px' }}>#</th>
                   <th className="text-start px-4">Service Type</th>
                   <th className="text-start px-4">Date</th>
-                  <th className="text-center px-4" style={{ width: 'auto', minWidth: '70px' }}>Status</th>
+                  <th className="text-start px-4" style={{ width: 'auto', minWidth: '70px' }}>Status</th>
                   <th className="text-center px-4" style={{ width: 'auto', minWidth: '70px' }}>Actions</th>
                 </tr>
               </thead>
