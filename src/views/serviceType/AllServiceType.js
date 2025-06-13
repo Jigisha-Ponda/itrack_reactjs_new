@@ -76,7 +76,7 @@ function AllServiceType() {
         cancelButtonText: 'No, Keep it',
       }).then((result) => {
         if (result.isConfirmed) {
-          deleteReq(`/admin/service/type?ID=${id}`, "admin").then((data) => {
+          deleteReq(`/admin/service/type?ID=${Id}`, "admin").then((data) => {
             sweetAlert.fire({ icon: 'success', title: 'Service Type Deleted Successfully!' })
             setIsRefresh(!isReferesh)
 
@@ -257,6 +257,7 @@ function AllServiceType() {
                 placeholder="Enter service type..."
                 onChange={(e) => setServiceType(e.target.value)}
                 value={serviceType}
+                className="custom-form-control"
               />
             </Form.Group>
           </Modal.Body>
@@ -277,6 +278,7 @@ function AllServiceType() {
                 placeholder="Enter service type..."
                 onChange={(e) => setServiceType(e.target.value)}
                 value={serviceType}
+                className="custom-form-control"
               />
             </Form.Group>
           </Modal.Body>
